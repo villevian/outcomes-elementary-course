@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — Outcomes Elementary</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0EDE8;
+    --sidebar: #2D2B35;
+    --sidebar-w: 220px;
+    --white: #FFFFFF;
+    --card: #FFFFFF;
+    --yellow: #FFC800;
+    --yellow-dark: #B8960A;
+    --purple: #7C6FA0;
+    --purple-light: #EAE6F3;
+    --green: #4CAF7D;
+    --green-light: #E8F5EE;
+    --red: #E05C5C;
+    --red-light: #FCEAEA;
+    --blue: #5B8DEF;
+    --blue-light: #EAF0FD;
+    --orange: #F0956A;
+    --orange-light: #FDF0EA;
+    --text: #1A1824;
+    --muted: #9490A0;
+    --border: #E8E4F0;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ===== LOGIN GATE ===== */
+  #login-gate {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-card {
+    background: var(--white); border-radius: 24px;
+    padding: 48px 40px; width: 100%; max-width: 400px;
+    box-shadow: var(--shadow-md); text-align: center;
+  }
+  .login-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem; color: var(--text); margin-bottom: 6px;
+  }
+  .login-logo em { color: var(--purple); font-style: normal; }
+  .login-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 32px; }
+  .login-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--purple-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 24px;
+  }
+  .login-label { font-size: 0.82rem; font-weight: 600; color: var(--muted); text-align: left; margin-bottom: 6px; }
+  .login-input {
+    width: 100%; border: 2px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 0.95rem; font-family: 'DM Sans', sans-serif;
+    outline: none; transition: border-color .2s; color: var(--text);
+    margin-bottom: 16px;
+  }
+  .login-input:focus { border-color: var(--purple); }
+  .login-btn {
+    width: 100%; background: var(--sidebar); color: white;
+    border: none; border-radius: var(--radius-sm);
+    padding: 13px; font-size: 0.95rem; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+    transition: opacity .2s;
+  }
+  .login-btn:hover { opacity: 0.85; }
+  .login-error { color: var(--red); font-size: 0.82rem; margin-top: 8px; display: none; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--sidebar);
+    min-height: 100vh; position: fixed; left: 0; top: 0;
+    display: flex; flex-direction: column;
+    padding: 28px 0; z-index: 50;
+  }
+  .sidebar-brand {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 12px;
+  }
+  .brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem; color: white;
+  }
+  .brand-name em { color: var(--yellow); font-style: normal; }
+  .brand-level {
+    font-size: 0.7rem; color: rgba(255,255,255,0.35);
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+  }
+
+  /* student info */
+  .sidebar-student {
+    padding: 12px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .student-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--purple); color: white;
+    font-size: 1.1rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; text-transform: uppercase;
+  }
+  .student-name { font-size: 0.85rem; font-weight: 600; color: white; }
+  .student-tag { font-size: 0.68rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
+
+  /* nav items */
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; margin: 1px 8px;
+    border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.55);
+    font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: all .15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+  .nav-item.active { background: rgba(255,255,255,0.12); color: white; }
+  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .sidebar-bottom {
+    margin-top: auto; padding: 0 8px;
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;
+  }
+  .logout-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.35); font-size: 0.85rem;
+    cursor: pointer; transition: all .15s; border: none;
+    background: none; font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+  .logout-btn:hover { color: var(--red); background: rgba(224,92,92,0.08); }
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1; padding: 32px;
+    min-height: 100vh;
+  }
+
+  /* page title */
+  .page-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+  }
+  .page-greeting {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem; color: var(--text);
+  }
+  .page-greeting em { color: var(--purple); font-style: normal; }
+  .page-date { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+
+  /* loading */
+  .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 0.9rem; }
+
+  /* ===== TAB PANELS ===== */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ===== DASHBOARD ===== */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px; margin-bottom: 20px;
+  }
+  @media(max-width:900px){ .dash-grid { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:600px){ .dash-grid { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 20px 22px; box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .stat-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+  .stat-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 3px; font-weight: 500; }
+
+  /* ring cards */
+  .rings-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 20px;
+  }
+  @media(max-width:700px){ .rings-row { grid-template-columns: 1fr 1fr; } }
+
+  .ring-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 22px 18px; box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .ring-card-title { font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+
+  .ring-wrap { position: relative; width: 90px; height: 90px; margin: 0 auto 12px; }
+  .ring-svg-el { transform: rotate(-90deg); }
+  .ring-bg-el { fill: none; stroke-width: 8; }
+  .ring-fg-el { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .ring-val {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; color: var(--text);
+  }
+  .ring-card-sub { font-size: 0.75rem; color: var(--muted); }
+
+  /* recent activity */
+  .section-title {
+    font-size: 0.75rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .activity-card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .activity-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px; border-bottom: 1px solid var(--border);
+  }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .activity-info { flex: 1; }
+  .activity-lesson { font-size: 0.88rem; font-weight: 500; }
+  .activity-ex { font-size: 0.75rem; color: var(--muted); }
+  .activity-score {
+    font-size: 0.82rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .score-good { background: var(--green-light); color: var(--green); }
+  .score-mid  { background: var(--orange-light); color: var(--orange); }
+  .score-bad  { background: var(--red-light); color: var(--red); }
+  .activity-time { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+  /* ===== MY CLASSES ===== */
+  .classes-list { display: flex; flex-direction: column; gap: 10px; }
+  .class-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 18px 20px; box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .class-num {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--purple-light); color: var(--purple);
+    font-weight: 700; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .class-info { flex: 1; }
+  .class-name { font-weight: 600; font-size: 0.93rem; }
+  .class-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .class-score {
+    font-size: 0.88rem; font-weight: 700;
+    padding: 5px 14px; border-radius: 20px;
+  }
+  .class-exes { font-size: 0.72rem; color: var(--muted); margin-top: 2px; text-align: right; }
+
+  /* ===== MY GRADES ===== */
+  .grades-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width:600px){ .grades-grid { grid-template-columns: 1fr; } }
+
+  .grade-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 24px; box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .grade-card-icon { font-size: 2rem; margin-bottom: 8px; }
+  .grade-card-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+
+  .big-ring { position: relative; width: 120px; height: 120px; margin: 0 auto 16px; }
+  .big-ring-val {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .big-ring-pct { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .big-ring-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .grade-desc { font-size: 0.8rem; color: var(--muted); }
+
+  .grade-speaking-note {
+    background: var(--purple-light); border-radius: var(--radius-sm);
+    padding: 12px 16px; font-size: 0.82rem; color: var(--purple);
+    font-weight: 500; margin-top: 8px;
+  }
+
+  /* overall grade card */
+  .overall-card {
+    background: var(--sidebar); border-radius: var(--radius);
+    padding: 24px; box-shadow: var(--shadow-md);
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+  }
+  .overall-ring { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+  .overall-ring-val {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .overall-pct { font-size: 1.5rem; font-weight: 700; color: white; line-height: 1; }
+  .overall-sub { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .overall-info { flex: 1; }
+  .overall-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: white; margin-bottom: 6px; }
+  .overall-desc { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .overall-bars { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+  .obar-row { display: flex; align-items: center; gap: 8px; }
+  .obar-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); min-width: 80px; }
+  .obar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+  .obar-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+  .obar-val { font-size: 0.75rem; color: white; font-weight: 600; min-width: 32px; text-align: right; }
+
+  /* empty state */
+  .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty p { font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div id="login-gate">
+  <div class="login-card">
+    <div class="login-avatar">🎓</div>
+    <div class="login-logo">Outcomes <em>Elementary</em></div>
+    <div class="login-sub">Student Dashboard</div>
+    <div class="login-label">Your name or Telegram username</div>
+    <input class="login-input" type="text" id="login-input"
+      placeholder="e.g. @mary_student" maxlength="60"
+      onkeydown="if(event.key==='Enter') enterDashboard()">
+    <button class="login-btn" onclick="enterDashboard()">Enter my dashboard →</button>
+    <div class="login-error" id="login-error">⚠️ Please enter your name</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-name">Outcomes <em>Elementary</em></div>
+    <div class="brand-level">A1–A2 · Student Book</div>
+  </div>
+
+  <div class="sidebar-student">
+    <div class="student-avatar" id="sb-avatar">?</div>
+    <div>
+      <div class="student-name" id="sb-name">—</div>
+      <div class="student-tag">Student</div>
+    </div>
+  </div>
+
+  <a class="nav-item active" onclick="switchTab('dashboard')" href="#">
+    <span class="nav-icon">📊</span> Dashboard
+  </a>
+  <a class="nav-item" onclick="switchTab('classes')" href="#">
+    <span class="nav-icon">📚</span> My Classes
+  </a>
+  <a class="nav-item" onclick="switchTab('grades')" href="#">
+    <span class="nav-icon">🎯</span> My Grades
+  </a>
+
+  <div class="sidebar-bottom">
+    <button class="logout-btn" onclick="logout()">
+      <span>↩</span> Log out
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="page-top">
+    <div>
+      <div class="page-greeting">Hello, <em id="greeting-name">Student</em>!</div>
+      <div class="page-date" id="page-date"></div>
+    </div>
+  </div>
+
+  <div id="main-loading" class="loading">⏳ Loading your data...</div>
+
+  <!-- DASHBOARD TAB -->
+  <div class="tab-panel" id="tab-dashboard">
+
+    <div class="dash-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#EAE6F3;">📚</div>
+        <div>
+          <div class="stat-num" id="s-lessons">—</div>
+          <div class="stat-label">Lessons submitted</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#E8F5EE;">✅</div>
+        <div>
+          <div class="stat-num" id="s-correct">—</div>
+          <div class="stat-label">Correct answers</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#FFF8E0;">⭐</div>
+        <div>
+          <div class="stat-num" id="s-pct">—</div>
+          <div class="stat-label">Overall accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- skill rings -->
+    <div class="section-title">Skills Overview</div>
+    <div class="rings-row" id="skill-rings">
+      <!-- rendered by JS -->
+    </div>
+
+    <!-- recent activity -->
+    <div class="section-title" style="margin-top:8px;">Recent Activity</div>
+    <div class="activity-card" id="recent-activity">
+      <div class="loading">⏳</div>
+    </div>
+
+  </div>
+
+  <!-- CLASSES TAB -->
+  <div class="tab-panel" id="tab-classes">
+    <div class="section-title">Completed Lessons</div>
+    <div class="classes-list" id="classes-list">
+      <div class="loading">⏳ Loading...</div>
+    </div>
+  </div>
+
+  <!-- GRADES TAB -->
+  <div class="tab-panel" id="tab-grades">
+    <div class="grades-grid" id="grades-grid">
+      <div class="loading">⏳ Loading...</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const SUPABASE_URL = 'https://ihfmroksigkimufjxope.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImloZm1yb2tzaWdraW11Zmp4b3BlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MDk0NjgsImV4cCI6MjA4ODk4NTQ2OH0.hFOWUdgXBpKbqo0uUbuINVv8WGeirZFMZcBejMkbKwU';
+const TOTAL_COURSE_QUESTIONS = 500; // approximate total for % of course
+
+let studentName = '';
+let allData = [];
+
+// skills config
+const SKILLS = [
+  { key: 'vocabulary', label: 'Vocabulary', icon: '📖', exercises: ['ex2','vocab','ex1'], color: '#7C6FA0', bg: '#EAE6F3' },
+  { key: 'grammar',    label: 'Grammar',    icon: '📐', exercises: ['ex4','ex5','ex6','ex9','ex11'], color: '#5B8DEF', bg: '#EAF0FD' },
+  { key: 'listening',  label: 'Listening',  icon: '🎧', exercises: ['ex5','ex6'], color: '#4CAF7D', bg: '#E8F5EE' },
+  { key: 'reading',    label: 'Reading',    icon: '👁', exercises: ['ex11','ex12'], color: '#F0956A', bg: '#FDF0EA' },
+  { key: 'speaking',   label: 'Speaking',   icon: '🗣', exercises: ['speaking'], color: '#E05C5C', bg: '#FCEAEA' },
+];
+
+// ── LOGIN ──────────────────────────────────────────────────────────────────────
+function enterDashboard() {
+  const val = document.getElementById('login-input').value.trim();
+  if (!val) { document.getElementById('login-error').style.display = 'block'; return; }
+  studentName = val;
+  document.getElementById('login-gate').style.display = 'none';
+
+  // set sidebar
+  document.getElementById('sb-name').textContent = studentName;
+  document.getElementById('sb-avatar').textContent = studentName[0].toUpperCase();
+  document.getElementById('greeting-name').textContent = studentName.replace('@','');
+
+  // date
+  document.getElementById('page-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  loadData();
+}
+
+function logout() {
+  studentName = '';
+  allData = [];
+  document.getElementById('login-input').value = '';
+  document.getElementById('login-gate').style.display = 'flex';
+}
+
+// ── LOAD ───────────────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/student_answers?student_name=eq.${encodeURIComponent(studentName)}&order=submitted_at.desc&limit=1000`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    allData = await res.json();
+    document.getElementById('main-loading').style.display = 'none';
+    renderAll();
+    switchTab('dashboard');
+  } catch(e) {
+    document.getElementById('main-loading').textContent = '❌ Could not load data.';
+  }
+}
+
+// ── RENDER ALL ─────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderDashboard();
+  renderClasses();
+  renderGrades();
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const lessons = new Set(allData.map(r => r.lesson));
+  const withResult = allData.filter(r => r.is_correct !== null);
+  const correct = withResult.filter(r => r.is_correct).length;
+  const pct = withResult.length ? Math.round(correct / withResult.length * 100) : 0;
+
+  document.getElementById('s-lessons').textContent = lessons.size;
+  document.getElementById('s-correct').textContent = correct;
+  document.getElementById('s-pct').textContent = pct + '%';
+
+  // skill rings
+  const ringsEl = document.getElementById('skill-rings');
+  ringsEl.innerHTML = SKILLS.map(s => {
+    const rows = allData.filter(r => s.exercises.some(ex => r.exercise.includes(ex)));
+    const withRes = rows.filter(r => r.is_correct !== null);
+    const ok = withRes.filter(r => r.is_correct).length;
+    const p = withRes.length ? Math.round(ok / withRes.length * 100) : (s.key === 'speaking' ? null : 0);
+    return ringCard(s, p);
+  }).join('');
+
+  // animate rings
+  setTimeout(() => animateRings(), 200);
+
+  // recent activity
+  const recent = allData.slice(0, 8);
+  if (!recent.length) {
+    document.getElementById('recent-activity').innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>No activity yet</p></div>';
+    return;
+  }
+  // group by lesson+exercise
+  const groups = {};
+  recent.forEach(r => {
+    const k = r.lesson + '||' + r.exercise;
+    if (!groups[k]) groups[k] = { lesson: r.lesson, exercise: r.exercise, correct: 0, total: 0, time: r.submitted_at };
+    if (r.is_correct !== null) { groups[k].total++; if (r.is_correct) groups[k].correct++; }
+  });
+
+  document.getElementById('recent-activity').innerHTML = Object.values(groups).slice(0,6).map(g => {
+    const p = g.total ? Math.round(g.correct / g.total * 100) : null;
+    const scoreCls = p === null ? 'score-mid' : p >= 70 ? 'score-good' : p >= 50 ? 'score-mid' : 'score-bad';
+    const scoreLabel = p === null ? 'open' : `${g.correct}/${g.total}`;
+    const time = g.time ? new Date(g.time).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    return `<div class="activity-row">
+      <div class="activity-dot" style="background:var(--purple)"></div>
+      <div class="activity-info">
+        <div class="activity-lesson">${g.lesson}</div>
+        <div class="activity-ex">${g.exercise}</div>
+      </div>
+      <span class="activity-score ${scoreCls}">${scoreLabel}</span>
+      <span class="activity-time">${time}</span>
+    </div>`;
+  }).join('');
+}
+
+function ringCard(skill, pct) {
+  const r = 36, circ = 2 * Math.PI * r;
+  const isNull = pct === null;
+  const label = isNull ? '—' : pct + '%';
+  const offset = isNull ? circ : circ - (circ * pct / 100);
+  return `<div class="ring-card">
+    <div class="ring-card-title">${skill.icon} ${skill.label}</div>
+    <div class="ring-wrap">
+      <svg class="ring-svg-el" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="ring-bg-el" cx="45" cy="45" r="${r}" stroke="${skill.bg === '#EAE6F3' ? '#e0d8f0' : skill.bg}" stroke-width="8"/>
+        <circle class="ring-fg-el skill-ring" cx="45" cy="45" r="${r}"
+          stroke="${skill.color}"
+          stroke-dasharray="${circ}"
+          stroke-dashoffset="${isNull ? circ : circ}"
+          data-target="${isNull ? circ : offset}"/>
+      </svg>
+      <div class="ring-val" style="color:${skill.color}">${label}</div>
+    </div>
+    <div class="ring-card-sub">${isNull ? 'Assessed by teacher' : pct >= 70 ? 'Great work! 🎉' : pct >= 50 ? 'Good progress 👍' : 'Keep going 💪'}</div>
+  </div>`;
+}
+
+function animateRings() {
+  document.querySelectorAll('.skill-ring').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    el.style.transition = 'stroke-dashoffset 1s ease';
+    el.style.strokeDashoffset = target;
+  });
+}
+
+// ── CLASSES ────────────────────────────────────────────────────────────────────
+function renderClasses() {
+  const lessons = {};
+  allData.filter(r => r.exercise !== 'feedback').forEach(r => {
+    if (!lessons[r.lesson]) lessons[r.lesson] = { exercises: new Set(), correct: 0, total: 0, time: r.submitted_at };
+    lessons[r.lesson].exercises.add(r.exercise);
+    if (r.is_correct !== null) {
+      lessons[r.lesson].total++;
+      if (r.is_correct) lessons[r.lesson].correct++;
+    }
+  });
+
+  const list = document.getElementById('classes-list');
+  const entries = Object.entries(lessons);
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📚</div><p>No lessons submitted yet</p></div>';
+    return;
+  }
+
+  list.innerHTML = entries.map(([lesson, d]) => {
+    const p = d.total ? Math.round(d.correct / d.total * 100) : null;
+    const scoreCls = p === null ? 'score-mid' : p >= 70 ? 'score-good' : p >= 50 ? 'score-mid' : 'score-bad';
+    const scoreLabel = p !== null ? `${p}%` : 'submitted';
+    const time = d.time ? new Date(d.time).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `<div class="class-card">
+      <div class="class-num">${lesson.split('-').pop() || '?'}</div>
+      <div class="class-info">
+        <div class="class-name">${lesson}</div>
+        <div class="class-meta">${d.exercises.size} exercises · ${time}</div>
+      </div>
+      <div>
+        <div class="class-score ${scoreCls}">${scoreLabel}</div>
+        <div class="class-exes">${d.correct}/${d.total} correct</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── GRADES ─────────────────────────────────────────────────────────────────────
+function renderGrades() {
+  const grid = document.getElementById('grades-grid');
+
+  // speaking from Supabase (teacher sets it via exercise='speaking')
+  const speakingRows = allData.filter(r => r.exercise === 'speaking');
+  const speakingVal = speakingRows.length ? speakingRows[0].answer : null;
+
+  // auto-calculated skills
+  const skillData = SKILLS.map(s => {
+    if (s.key === 'speaking') {
+      const p = speakingVal ? parseInt(speakingVal) : null;
+      return { ...s, pct: p, auto: false };
+    }
+    const rows = allData.filter(r => s.exercises.some(ex => r.exercise.includes(ex)));
+    const withRes = rows.filter(r => r.is_correct !== null);
+    const ok = withRes.filter(r => r.is_correct).length;
+    const p = withRes.length ? Math.round(ok / withRes.length * 100) : 0;
+    return { ...s, pct: p, auto: true };
+  });
+
+  const overall = skillData.filter(s => s.pct !== null);
+  const overallPct = overall.length ? Math.round(overall.reduce((a,b) => a + (b.pct||0), 0) / overall.length) : 0;
+
+  const circ = 2 * Math.PI * 45;
+  const offset = circ - (circ * overallPct / 100);
+
+  grid.innerHTML = `
+    <!-- OVERALL -->
+    <div class="overall-card">
+      <div class="overall-ring">
+        <svg style="transform:rotate(-90deg)" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="9"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#FFC800" stroke-width="9"
+            stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ}"
+            id="overall-ring-el" style="transition:stroke-dashoffset 1.2s ease;"/>
+        </svg>
+        <div class="overall-ring-val">
+          <div class="overall-pct">${overallPct}%</div>
+          <div class="overall-sub">overall</div>
+        </div>
+      </div>
+      <div class="overall-info">
+        <div class="overall-title">Overall Progress</div>
+        <div class="overall-desc">Based on all submitted exercises<br>across all completed lessons.</div>
+      </div>
+      <div class="overall-bars">
+        ${skillData.map(s => `
+          <div class="obar-row">
+            <div class="obar-label">${s.icon} ${s.label}</div>
+            <div class="obar-track"><div class="obar-fill" style="width:0%; background:${s.color};" data-w="${s.pct ?? 0}"></div></div>
+            <div class="obar-val">${s.pct !== null ? s.pct + '%' : '—'}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    ${skillData.map(s => {
+      const r2 = 50, c2 = 2 * Math.PI * r2;
+      const off = s.pct !== null ? c2 - (c2 * s.pct / 100) : c2;
+      return `<div class="grade-card">
+        <div class="grade-card-icon">${s.icon}</div>
+        <div class="grade-card-title">${s.label}</div>
+        <div class="big-ring">
+          <svg style="transform:rotate(-90deg)" width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="${r2}" fill="none" stroke="${s.bg}" stroke-width="10"/>
+            <circle cx="60" cy="60" r="${r2}" fill="none" stroke="${s.color}" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="${c2}" stroke-dashoffset="${c2}"
+              class="grade-ring-el" data-target="${off}" style="transition:stroke-dashoffset 1s ease;"/>
+          </svg>
+          <div class="big-ring-val">
+            <div class="big-ring-pct" style="color:${s.color}">${s.pct !== null ? s.pct + '%' : '—'}</div>
+            <div class="big-ring-label">${s.auto ? 'auto' : 'by teacher'}</div>
+          </div>
+        </div>
+        <div class="grade-desc">${s.pct === null ? '' : s.pct >= 80 ? '🌟 Excellent!' : s.pct >= 60 ? '👍 Good job' : '💪 Keep going'}</div>
+        ${s.key === 'speaking' && !speakingVal ? '<div class="grade-speaking-note">🎙 Your teacher will assess this</div>' : ''}
+      </div>`;
+    }).join('')}
+  `;
+
+  setTimeout(() => {
+    const el = document.getElementById('overall-ring-el');
+    if (el) el.style.strokeDashoffset = offset;
+    document.querySelectorAll('.grade-ring-el').forEach(el => {
+      el.style.strokeDashoffset = el.dataset.target;
+    });
+    document.querySelectorAll('.obar-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 300);
+}
+
+// ── TAB SWITCH ─────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.currentTarget && event.currentTarget.classList.add('active');
+
+  // fix active nav
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(tab === 'dashboard' ? 'dashboard' : tab === 'classes' ? 'class' : 'grade')) {
+      n.classList.add('active');
+    }
+  });
+}
+</script>
+</body>
+</html>
