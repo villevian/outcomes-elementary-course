@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outcomes Elementary — Course Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #f5c400;
+    --yellow-dark: #c49a00;
+    --black: #1a1a1a;
+    --white: #ffffff;
+    --gray: #f4f4f4;
+    --muted: #888;
+    --border: #e0e0e0;
+    --green: #1e8449;
+    --blue: #2471a3;
+    --red: #c0392b;
+    --locked: #d0d0d0;
+    --locked-text: #aaa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: #ffffff;
+    color: var(--black);
+    padding-bottom: 80px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--black);
+    color: white;
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 20px,
+      rgba(245,196,0,0.04) 20px, rgba(245,196,0,0.04) 40px
+    );
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 16px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    position: relative;
+    line-height: 1.1;
+  }
+  .hero h1 span { color: var(--yellow); }
+  .hero p {
+    margin-top: 10px;
+    color: rgba(255,255,255,0.65);
+    font-size: 0.95rem;
+    position: relative;
+  }
+
+  /* ===== LEGEND ===== */
+  .legend {
+    max-width: 880px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ===== COURSE BODY ===== */
+  .course-body {
+    max-width: 880px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+  }
+
+  /* ===== UNIT BLOCK ===== */
+  .unit-block {
+    margin-bottom: 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+
+  /* Unit header */
+  .unit-header {
+    background: var(--black);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .unit-num {
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 900;
+    font-size: 1.1rem;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .unit-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .unit-page {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    white-space: nowrap;
+  }
+
+  /* Lessons inside unit */
+  .unit-lessons {
+    background: white;
+    padding: 8px 0;
+  }
+
+  /* Single lesson row */
+  .lesson-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background .15s;
+  }
+  .lesson-row:last-child { border-bottom: none; }
+  .lesson-row:hover { background: #fafafa; }
+
+  .lesson-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    padding: 11px 20px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  /* locked = no href yet */
+  .lesson-row.locked .lesson-link {
+    cursor: default;
+    pointer-events: none;
+  }
+  .lesson-row.locked .lesson-code { color: var(--locked-text); }
+  .lesson-row.locked .lesson-title { color: var(--locked-text); }
+
+  .lesson-code {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--yellow-dark);
+    min-width: 38px;
+    font-family: monospace;
+  }
+  .lesson-title {
+    font-size: 0.93rem;
+    flex: 1;
+  }
+  .lesson-title strong { font-weight: 600; }
+
+  /* Status badge */
+  .lesson-status {
+    padding: 0 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .status-ready {
+    color: var(--green);
+  }
+  .status-locked {
+    color: var(--locked);
+  }
+
+  /* Type badges */
+  .lesson-type {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-right: 4px;
+  }
+  .type-lesson  { background: #e8f4fd; color: var(--blue); }
+  .type-hw      { background: #fff3e0; color: #c55a00; }
+  .type-writing { background: #f3e5f5; color: #7b1fa2; }
+  .type-review  { background: #e8f5e9; color: var(--green); }
+  .type-test    { background: #fce4ec; color: var(--red); }
+  .type-vocab   { background: #fef9e7; color: var(--yellow-dark); }
+
+  /* Writing / Review separator rows */
+  .lesson-row.special {
+    background: #fafafa;
+  }
+  .lesson-row.special .lesson-link { padding: 9px 20px; }
+  .lesson-row.special .lesson-title { font-style: italic; font-size: 0.88rem; }
+
+  /* Test row */
+  .lesson-row.test-row {
+    background: #fff8f8;
+  }
+  .lesson-row.test-row .lesson-code { color: var(--red); }
+
+  /* Vocab builder row */
+  .lesson-row.vocab-row {
+    background: #fffdf0;
+  }
+  .lesson-row.vocab-row .lesson-code { color: var(--yellow-dark); }
+
+  /* Arrow icon */
+  .arrow {
+    color: #ccc;
+    font-size: 0.9rem;
+    padding-right: 16px;
+    flex-shrink: 0;
+  }
+  .lesson-row:not(.locked) .arrow { color: var(--blue); }
+
+  /* ===== PROGRESS BAR per unit ===== */
+  .unit-progress {
+    height: 3px;
+    background: var(--border);
+    position: relative;
+  }
+  .unit-progress-fill {
+    height: 100%;
+    background: var(--yellow);
+    transition: width .3s;
+  }
+
+  /* ===== STATS BAR ===== */
+  .stats-bar {
+    max-width: 880px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--gray);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .stat-chip span { color: var(--black); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">📚 Course Map</div>
+  <h1>Outcomes <span>Elementary</span></h1>
+  <p>16 Units · Student Book · All lessons, workbook, tests &amp; vocabulary builders</p>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2471a3"></div> Lesson</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c55a00"></div> Workbook</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7b1fa2"></div> Writing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1e8449"></div> Review</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div> Test</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c49a00"></div> Vocabulary Builder</div>
+  <div class="legend-item" style="margin-left:auto;">
+    🔒 = coming soon &nbsp; ✅ = ready
+  </div>
+</div>
+
+<div class="course-body">
+
+<!-- ============================================================ -->
+<!-- UNIT 1 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header">
+    <div class="unit-num">1</div>
+    <div class="unit-title">People and places</div>
+    <div class="unit-page">p. 6</div>
+  </div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+
+    <div class="lesson-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">1A</span>
+        <span class="lesson-type type-lesson">Lesson</span>
+        <span class="lesson-title">Where are you from?</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+    <div class="lesson-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">1A</span>
+        <span class="lesson-type type-hw">Workbook</span>
+        <span class="lesson-title">Where are you from? — Workbook</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+
+    <div class="lesson-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">1B</span>
+        <span class="lesson-type type-lesson">Lesson</span>
+        <span class="lesson-title">A nice place to live</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+    <div class="lesson-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">1B</span>
+        <span class="lesson-type type-hw">Workbook</span>
+        <span class="lesson-title">A nice place to live — Workbook</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+
+    <div class="lesson-row">
+      <a class="lesson-link" href="lessons/1c-what-do-you-do.html">
+        <span class="lesson-code">1C</span>
+        <span class="lesson-type type-lesson">Lesson</span>
+        <span class="lesson-title">What do you do?</span>
+      </a>
+      <span class="lesson-status status-ready">✅</span>
+      <span class="arrow">›</span>
+    </div>
+    <div class="lesson-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">1C</span>
+        <span class="lesson-type type-hw">Workbook</span>
+        <span class="lesson-title">What do you do? — Workbook</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+
+    <div class="lesson-row test-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">T1</span>
+        <span class="lesson-type type-test">Test</span>
+        <span class="lesson-title">Unit 1 Test</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+    <div class="lesson-row vocab-row locked">
+      <a class="lesson-link">
+        <span class="lesson-code">V1</span>
+        <span class="lesson-type type-vocab">Vocab</span>
+        <span class="lesson-title">Vocabulary Builder 1</span>
+      </a>
+      <span class="lesson-status status-locked">🔒</span>
+      <span class="arrow">›</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 2 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header">
+    <div class="unit-num">2</div>
+    <div class="unit-title">Daily life</div>
+    <div class="unit-page">p. 14</div>
+  </div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Do you want to come?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Do you want to come? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">I usually finish at five</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">I usually finish at five — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">A lot of homework!</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">2C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">A lot of homework! — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W1</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 1: Completing forms</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R1</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 1</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T2</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 2 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V2</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 2</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 3 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">3</div><div class="unit-title">Home</div><div class="unit-page">p. 26</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Is there one near here?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Is there one near here? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Family home</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Family home — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Can you help me?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">3C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Can you help me? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T3</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 3 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V3</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 3</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 4 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">4</div><div class="unit-title">Time off</div><div class="unit-page">p. 34</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">I had a great weekend</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">I had a great weekend — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">It didn't rain once</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">It didn't rain once — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What did you do?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">4C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What did you do? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W2</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 2: Introducing yourself</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R2</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 2</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T4</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 4 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V4</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 4</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 5 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">5</div><div class="unit-title">Shopping</div><div class="unit-page">p. 46</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">How much is that red one?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">How much is that red one? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">They're having a sale</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">They're having a sale — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Do you sell …?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">5C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Do you sell …? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T5</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 5 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V5</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 5</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 6 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">6</div><div class="unit-title">Education</div><div class="unit-page">p. 54</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What are you studying?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What are you studying? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Two is better than one</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Two is better than one — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Learning and training</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">6C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Learning and training — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W3</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 3: Writing adverts</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R3</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 3</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T6</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 6 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V6</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 6</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 7 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">7</div><div class="unit-title">People I know</div><div class="unit-page">p. 66</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Cousins, aunts and uncles</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Cousins, aunts and uncles — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">I have to look after the kids</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">I have to look after the kids — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">A good friend</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">7C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">A good friend — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T7</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 7 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V7</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 7</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 8 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">8</div><div class="unit-title">Plans</div><div class="unit-page">p. 74</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What are your plans?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What are your plans? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">For and against</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">For and against — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Hopes and dreams</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">8C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Hopes and dreams — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W4</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 4: Writing invitations</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R4</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 4</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T8</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 8 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V8</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 8</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 9 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">9</div><div class="unit-title">Experiences</div><div class="unit-page">p. 86</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Have you ever been there?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Have you ever been there? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">New experiences</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">New experiences — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Thank you so much</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">9C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Thank you so much — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T9</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 9 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V9</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 9</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 10 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">10</div><div class="unit-title">Food</div><div class="unit-page">p. 94</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Are you ready to order?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Are you ready to order? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">A change for the better</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">A change for the better — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What's this on the menu?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">10C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What's this on the menu? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W5</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 5: Writing a restaurant review</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R5</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 5</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T10</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 10 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V10</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 10</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 11 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">11</div><div class="unit-title">Travel</div><div class="unit-page">p. 106</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">When's the next train?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">When's the next train? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Getting around</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Getting around — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Where's the best place to go?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">11C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Where's the best place to go? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T11</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 11 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V11</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 11</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 12 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">12</div><div class="unit-title">Feelings</div><div class="unit-page">p. 114</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Are you OK?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Are you OK? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Good news, bad news</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Good news, bad news — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Happy days</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">12C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Happy days — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W6</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 6: Emailing a friend</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R6</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 6</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T12</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 12 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V12</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 12</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 13 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">13</div><div class="unit-title">Nature</div><div class="unit-page">p. 126</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">There might be a storm</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">There might be a storm — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Country life</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Country life — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">They're lovely animals</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">13C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">They're lovely animals — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T13</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 13 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V13</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 13</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 14 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">14</div><div class="unit-title">Opinions</div><div class="unit-page">p. 134</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What was the film like?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What was the film like? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">A better life</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">A better life — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">What do you think will happen?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">14C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">What do you think will happen? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W7</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 7: Writing social media posts</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R7</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 7</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T14</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 14 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V14</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 14</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 15 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">15</div><div class="unit-title">Technology</div><div class="unit-page">p. 146</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Can you recommend anything?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Can you recommend anything? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">It's a good solution</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">It's a good solution — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">My tech</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">15C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">My tech — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T15</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 15 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V15</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 15</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- UNIT 16 -->
+<!-- ============================================================ -->
+<div class="unit-block">
+  <div class="unit-header"><div class="unit-num">16</div><div class="unit-title">Love</div><div class="unit-page">p. 154</div></div>
+  <div class="unit-progress"><div class="unit-progress-fill" style="width:0%"></div></div>
+  <div class="unit-lessons">
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16A</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Did I tell you my news?</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16A</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Did I tell you my news? — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16B</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">I promise</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16B</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">I promise — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16C</span><span class="lesson-type type-lesson">Lesson</span><span class="lesson-title">Love at first sight</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row locked"><a class="lesson-link"><span class="lesson-code">16C</span><span class="lesson-type type-hw">Workbook</span><span class="lesson-title">Love at first sight — Workbook</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">W8</span><span class="lesson-type type-writing">Writing</span><span class="lesson-title">Writing 8: Writing short stories</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row special locked"><a class="lesson-link"><span class="lesson-code">R8</span><span class="lesson-type type-review">Review</span><span class="lesson-title">Review 8</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row test-row locked"><a class="lesson-link"><span class="lesson-code">T16</span><span class="lesson-type type-test">Test</span><span class="lesson-title">Unit 16 Test</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+    <div class="lesson-row vocab-row locked"><a class="lesson-link"><span class="lesson-code">V16</span><span class="lesson-type type-vocab">Vocab</span><span class="lesson-title">Vocabulary Builder 16</span></a><span class="lesson-status status-locked">🔒</span><span class="arrow">›</span></div>
+  </div>
+</div>
+
+</div><!-- /course-body -->
+
+</body>
+</html>

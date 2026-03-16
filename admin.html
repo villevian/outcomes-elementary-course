@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Outcomes Elementary</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #f5c400;
+    --black: #1a1a1a;
+    --white: #ffffff;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --border: #e8e8e8;
+    --muted: #888;
+    --green: #1e8449;
+    --green-bg: #eafaf1;
+    --red: #c0392b;
+    --red-bg: #fdf2f2;
+    --blue: #2471a3;
+    --blue-bg: #eaf3fb;
+    --purple: #7b1fa2;
+    --orange: #c55a00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    background: var(--black);
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    color: white; font-size: 1.1rem; font-weight: 700;
+  }
+  .topbar-logo span { color: var(--yellow); }
+  .topbar-tag {
+    background: var(--yellow); color: var(--black);
+    font-size: 0.72rem; font-weight: 700; padding: 2px 10px;
+    border-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .topbar-right {
+    margin-left: auto; display: flex; gap: 10px; align-items: center;
+  }
+  .refresh-btn {
+    background: rgba(255,255,255,0.1); color: white; border: none;
+    padding: 7px 16px; border-radius: 8px; font-size: 0.82rem;
+    font-family: 'Source Sans 3', sans-serif; cursor: pointer;
+    font-weight: 600; transition: background .2s;
+  }
+  .refresh-btn:hover { background: rgba(255,255,255,0.2); }
+  .last-updated { color: rgba(255,255,255,0.4); font-size: 0.75rem; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .admin-body {
+    max-width: 1100px; margin: 0 auto; padding: 28px 20px;
+  }
+
+  /* ===== STAT CARDS ===== */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media(max-width:700px){ .stats-row { grid-template-columns: repeat(2,1fr); } }
+  .stat-card {
+    background: var(--card); border-radius: 12px;
+    padding: 18px 20px; border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .stat-card .stat-num {
+    font-size: 2rem; font-weight: 900; line-height: 1;
+    color: var(--black); margin-bottom: 4px;
+  }
+  .stat-card .stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+  .stat-card.yellow .stat-num { color: #b8860b; }
+  .stat-card.green .stat-num { color: var(--green); }
+  .stat-card.blue .stat-num { color: var(--blue); }
+  .stat-card.red .stat-num { color: var(--red); }
+
+  /* ===== FILTERS ===== */
+  .filters-bar {
+    background: var(--card); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filters-bar label { font-size: 0.82rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .filters-bar select, .filters-bar input[type="text"] {
+    border: 2px solid var(--border); border-radius: 8px;
+    padding: 7px 12px; font-size: 0.88rem;
+    font-family: 'Source Sans 3', sans-serif;
+    background: white; outline: none; min-width: 160px;
+    transition: border-color .2s;
+  }
+  .filters-bar select:focus, .filters-bar input:focus { border-color: var(--blue); }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 20px; border-radius: 8px; border: 2px solid var(--border);
+    background: white; color: var(--muted); font-size: 0.88rem;
+    font-family: 'Source Sans 3', sans-serif; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .tab-btn.active {
+    background: var(--black); color: white; border-color: var(--black);
+  }
+  .tab-btn:hover:not(.active) { border-color: var(--black); color: var(--black); }
+
+  /* ===== TABLE ===== */
+  .table-wrap {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+  }
+  .table-header {
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .table-header h3 { font-size: 0.95rem; font-weight: 700; }
+  .table-count { font-size: 0.8rem; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead th {
+    background: #f8f8f8; padding: 10px 16px;
+    text-align: left; font-size: 0.78rem; font-weight: 700;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+    cursor: pointer; user-select: none;
+  }
+  thead th:hover { color: var(--black); }
+  tbody tr { border-bottom: 1px solid #f4f4f4; transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  tbody td { padding: 10px 16px; vertical-align: middle; }
+
+  /* badges */
+  .badge {
+    display: inline-block; padding: 2px 9px;
+    border-radius: 10px; font-size: 0.75rem; font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge-lesson  { background: var(--blue-bg);   color: var(--blue); }
+  .badge-workbook { background: #fff3e0; color: var(--orange); }
+  .badge-test    { background: var(--red-bg);    color: var(--red); }
+  .badge-vocab   { background: #fef9e7; color: #b8860b; }
+  .badge-writing { background: #f3e5f5; color: var(--purple); }
+  .badge-review  { background: var(--green-bg);  color: var(--green); }
+
+  .correct-yes { color: var(--green); font-weight: 700; }
+  .correct-no  { color: var(--red); font-weight: 700; }
+  .correct-null { color: var(--muted); }
+
+  /* score pill */
+  .score-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 46px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 700; font-size: 0.82rem;
+  }
+  .score-high { background: var(--green-bg); color: var(--green); }
+  .score-mid  { background: #fff8e1; color: #c55a00; }
+  .score-low  { background: var(--red-bg); color: var(--red); }
+
+  /* student card expand */
+  .student-name-btn {
+    background: none; border: none; font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem; font-weight: 700; color: var(--blue);
+    cursor: pointer; text-align: left; padding: 0;
+    text-decoration: underline; text-decoration-style: dotted;
+  }
+  .student-name-btn:hover { color: var(--black); }
+
+  /* detail panel */
+  .detail-panel {
+    background: #f7f9ff; border: 1px solid #c8d8f0;
+    border-radius: 10px; padding: 16px 20px; margin: 8px 16px 16px;
+    font-size: 0.85rem;
+  }
+  .detail-panel h4 { color: var(--blue); margin-bottom: 10px; font-size: 0.9rem; }
+  .detail-answers {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: 8px;
+  }
+  .detail-answer-row {
+    background: white; border-radius: 6px; padding: 8px 12px;
+    border: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px;
+  }
+  .detail-answer-row .qa-q { font-size: 0.75rem; color: var(--muted); }
+  .detail-answer-row .qa-a { font-weight: 600; font-size: 0.85rem; }
+  .detail-answer-row .qa-ok { font-size: 0.75rem; }
+
+  /* empty state */
+  .empty-state {
+    text-align: center; padding: 48px 20px; color: var(--muted);
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* loading */
+  .loading-state {
+    text-align: center; padding: 36px; color: var(--muted); font-size: 0.9rem;
+  }
+
+  /* export btn */
+  .export-btn {
+    background: var(--green); color: white; border: none;
+    padding: 8px 18px; border-radius: 8px; font-size: 0.82rem;
+    font-family: 'Source Sans 3', sans-serif; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+  }
+  .export-btn:hover { background: #166534; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">Outcomes <span>Elementary</span></div>
+  <div class="topbar-tag">Admin</div>
+  <div class="topbar-right">
+    <span class="last-updated" id="last-updated">—</span>
+    <button class="refresh-btn" onclick="loadAll()">⟳ Refresh</button>
+  </div>
+</div>
+
+<div class="admin-body">
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="stat-num" id="stat-students">—</div>
+      <div class="stat-label">👤 Students</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-num" id="stat-submissions">—</div>
+      <div class="stat-label">📝 Submissions</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num" id="stat-correct">—</div>
+      <div class="stat-label">✅ Correct answers</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num" id="stat-lessons">—</div>
+      <div class="stat-label">📚 Lessons submitted</div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <label>🔍 Student:</label>
+    <input type="text" id="filter-student" placeholder="Search name..." oninput="applyFilters()">
+    <label>📖 Lesson:</label>
+    <select id="filter-lesson" onchange="applyFilters()">
+      <option value="">All lessons</option>
+    </select>
+    <label>📋 Exercise:</label>
+    <select id="filter-exercise" onchange="applyFilters()">
+      <option value="">All exercises</option>
+    </select>
+    <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+    <button class="tab-btn" onclick="switchTab('students')">👥 By Student</button>
+    <button class="tab-btn" onclick="switchTab('answers')">📝 All Answers</button>
+  </div>
+
+  <!-- TAB: OVERVIEW -->
+  <div id="tab-overview">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Students — Lesson Summary</h3>
+        <span class="table-count" id="overview-count"></span>
+      </div>
+      <div id="overview-body">
+        <div class="loading-state">⏳ Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: BY STUDENT -->
+  <div id="tab-students" style="display:none;">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Students — Detailed View</h3>
+        <span class="table-count" id="students-count"></span>
+      </div>
+      <div id="students-body">
+        <div class="loading-state">⏳ Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ALL ANSWERS -->
+  <div id="tab-answers" style="display:none;">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>All Answers</h3>
+        <span class="table-count" id="answers-count"></span>
+      </div>
+      <div id="answers-body">
+        <div class="loading-state">⏳ Loading...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = 'https://ihfmroksigkimufjxope.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImloZm1yb2tzaWdraW11Zmp4b3BlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MDk0NjgsImV4cCI6MjA4ODk4NTQ2OH0.hFOWUdgXBpKbqo0uUbuINVv8WGeirZFMZcBejMkbKwU';
+
+let allData = [];
+let filteredData = [];
+let currentTab = 'overview';
+
+// Auto-load on open
+window.addEventListener('DOMContentLoaded', loadAll);
+
+// ===== LOAD DATA =====
+async function loadAll() {
+  try {
+    document.getElementById('overview-body').innerHTML = '<div class="loading-state">⏳ Loading...</div>';
+    document.getElementById('students-body').innerHTML = '<div class="loading-state">⏳ Loading...</div>';
+    document.getElementById('answers-body').innerHTML = '<div class="loading-state">⏳ Loading...</div>';
+
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/student_answers?select=*&order=submitted_at.desc&limit=2000`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY
+        }
+      }
+    );
+    allData = await res.json();
+
+    document.getElementById('last-updated').textContent =
+      'Updated: ' + new Date().toLocaleTimeString();
+
+    populateFilters();
+    applyFilters();
+
+  } catch(e) {
+    document.getElementById('overview-body').innerHTML =
+      '<div class="loading-state">❌ Error loading data. Check Supabase connection.</div>';
+    console.error(e);
+  }
+}
+
+// ===== FILTERS =====
+function populateFilters() {
+  const lessons = [...new Set(allData.map(r => r.lesson))].sort();
+  const exercises = [...new Set(allData.map(r => r.exercise))].sort();
+
+  const lSel = document.getElementById('filter-lesson');
+  lSel.innerHTML = '<option value="">All lessons</option>' +
+    lessons.map(l => `<option value="${l}">${l}</option>`).join('');
+
+  const eSel = document.getElementById('filter-exercise');
+  eSel.innerHTML = '<option value="">All exercises</option>' +
+    exercises.map(e => `<option value="${e}">${e}</option>`).join('');
+}
+
+function applyFilters() {
+  const student = document.getElementById('filter-student').value.toLowerCase();
+  const lesson = document.getElementById('filter-lesson').value;
+  const exercise = document.getElementById('filter-exercise').value;
+
+  filteredData = allData.filter(r => {
+    if (student && !r.student_name.toLowerCase().includes(student)) return false;
+    if (lesson && r.lesson !== lesson) return false;
+    if (exercise && r.exercise !== exercise) return false;
+    return true;
+  });
+
+  updateStats();
+  renderOverview();
+  renderStudents();
+  renderAnswers();
+}
+
+// ===== STATS =====
+function updateStats() {
+  const students = new Set(filteredData.map(r => r.student_name)).size;
+  const submissions = filteredData.length;
+  const correct = filteredData.filter(r => r.is_correct === true).length;
+  const lessons = new Set(filteredData.map(r => r.student_name + '|' + r.lesson)).size;
+
+  document.getElementById('stat-students').textContent = students;
+  document.getElementById('stat-submissions').textContent = submissions;
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-lessons').textContent = lessons;
+}
+
+// ===== TAB SWITCH =====
+function switchTab(tab) {
+  currentTab = tab;
+  ['overview','students','answers'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['overview','students','answers'][i] === tab);
+  });
+}
+
+// ===== RENDER OVERVIEW =====
+function renderOverview() {
+  // Group by student → lesson → compute score
+  const map = {};
+  filteredData.forEach(r => {
+    if (!map[r.student_name]) map[r.student_name] = {};
+    if (!map[r.student_name][r.lesson]) map[r.student_name][r.lesson] = { correct: 0, total: 0, exercises: new Set() };
+    const entry = map[r.student_name][r.lesson];
+    entry.exercises.add(r.exercise);
+    if (r.is_correct !== null) {
+      entry.total++;
+      if (r.is_correct) entry.correct++;
+    }
+  });
+
+  const students = Object.keys(map).sort();
+  if (!students.length) {
+    document.getElementById('overview-body').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">📭</div><p>No data found</p></div>';
+    document.getElementById('overview-count').textContent = '';
+    return;
+  }
+
+  const allLessons = [...new Set(filteredData.map(r => r.lesson))].sort();
+  document.getElementById('overview-count').textContent = students.length + ' students · ' + allLessons.length + ' lessons';
+
+  let html = `<div style="overflow-x:auto;"><table>
+    <thead><tr>
+      <th onclick="sortTable('name')">Student ↕</th>
+      ${allLessons.map(l => `<th>${l}</th>`).join('')}
+      <th>Total</th>
+    </tr></thead><tbody>`;
+
+  students.forEach(name => {
+    let totalC = 0, totalQ = 0;
+    const cells = allLessons.map(lesson => {
+      const d = map[name][lesson];
+      if (!d) return '<td style="color:#ddd; text-align:center;">—</td>';
+      totalC += d.correct; totalQ += d.total;
+      const pct = d.total > 0 ? Math.round(d.correct / d.total * 100) : null;
+      const cls = pct === null ? '' : pct >= 70 ? 'score-high' : pct >= 50 ? 'score-mid' : 'score-low';
+      const label = pct === null ? `✅` : `${d.correct}/${d.total}`;
+      return `<td style="text-align:center;"><span class="score-pill ${cls}">${label}</span></td>`;
+    }).join('');
+
+    const totalPct = totalQ > 0 ? Math.round(totalC / totalQ * 100) : null;
+    const totalCls = totalPct === null ? '' : totalPct >= 70 ? 'score-high' : totalPct >= 50 ? 'score-mid' : 'score-low';
+    const totalLabel = totalQ > 0 ? `${totalC}/${totalQ}` : '—';
+
+    html += `<tr>
+      <td><button class="student-name-btn" onclick="filterByStudent('${name}')">${name}</button></td>
+      ${cells}
+      <td style="text-align:center;"><span class="score-pill ${totalCls}">${totalLabel}</span></td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  document.getElementById('overview-body').innerHTML = html;
+}
+
+// ===== RENDER BY STUDENT =====
+function renderStudents() {
+  const students = [...new Set(filteredData.map(r => r.student_name))].sort();
+  if (!students.length) {
+    document.getElementById('students-body').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">👤</div><p>No students found</p></div>';
+    document.getElementById('students-count').textContent = '';
+    return;
+  }
+  document.getElementById('students-count').textContent = students.length + ' students';
+
+  let html = `<table>
+    <thead><tr>
+      <th>Student</th><th>Lesson</th><th>Exercise</th>
+      <th>Answers</th><th>Score</th><th>Submitted</th>
+    </tr></thead><tbody>`;
+
+  students.forEach(name => {
+    const sData = filteredData.filter(r => r.student_name === name);
+    // Group by lesson+exercise
+    const groups = {};
+    sData.forEach(r => {
+      const key = r.lesson + '||' + r.exercise;
+      if (!groups[key]) groups[key] = { lesson: r.lesson, exercise: r.exercise, rows: [], lastTime: '' };
+      groups[key].rows.push(r);
+      if (r.submitted_at > groups[key].lastTime) groups[key].lastTime = r.submitted_at;
+    });
+
+    let first = true;
+    Object.values(groups).sort((a,b) => b.lastTime.localeCompare(a.lastTime)).forEach(g => {
+      const correct = g.rows.filter(r => r.is_correct === true).length;
+      const total = g.rows.filter(r => r.is_correct !== null).length;
+      const pct = total > 0 ? Math.round(correct/total*100) : null;
+      const scoreCls = pct === null ? '' : pct>=70?'score-high':pct>=50?'score-mid':'score-low';
+      const scoreLabel = total > 0 ? `${correct}/${total}` : '✅ open';
+      const time = g.lastTime ? new Date(g.lastTime).toLocaleString('uk-UA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+
+      const detailId = 'detail_' + (name + g.lesson + g.exercise).replace(/[^a-z0-9]/gi,'_');
+      const answersHtml = g.rows.map(r =>
+        `<div class="detail-answer-row">
+          <div class="qa-q">🔹 ${r.question}</div>
+          <div class="qa-a">${r.answer || '<em style="color:#aaa">empty</em>'}</div>
+          <div class="qa-ok">${r.is_correct === true ? '✅ correct' : r.is_correct === false ? '❌ wrong' : '👁 open'}</div>
+        </div>`
+      ).join('');
+
+      html += `<tr>
+        <td>${first ? `<b>${name}</b>` : ''}</td>
+        <td><span class="badge badge-lesson">${g.lesson}</span></td>
+        <td><code style="font-size:0.82rem;">${g.exercise}</code></td>
+        <td>
+          <button class="student-name-btn" onclick="toggleDetail('${detailId}')">
+            ${g.rows.length} answers ▾
+          </button>
+        </td>
+        <td><span class="score-pill ${scoreCls}">${scoreLabel}</span></td>
+        <td style="color:var(--muted); font-size:0.8rem;">${time}</td>
+      </tr>
+      <tr id="${detailId}" style="display:none;">
+        <td colspan="6" style="padding:0 0 8px 0;">
+          <div class="detail-panel">
+            <h4>📋 ${name} — ${g.lesson} / ${g.exercise}</h4>
+            <div class="detail-answers">${answersHtml}</div>
+          </div>
+        </td>
+      </tr>`;
+      first = false;
+    });
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('students-body').innerHTML = html;
+}
+
+// ===== RENDER ALL ANSWERS =====
+function renderAnswers() {
+  if (!filteredData.length) {
+    document.getElementById('answers-body').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">📭</div><p>No answers found</p></div>';
+    document.getElementById('answers-count').textContent = '';
+    return;
+  }
+
+  document.getElementById('answers-count').textContent = filteredData.length + ' rows';
+
+  let html = `<div style="overflow-x:auto;"><table>
+    <thead><tr>
+      <th>Student</th><th>Lesson</th><th>Exercise</th>
+      <th>Question</th><th>Answer</th><th>Result</th><th>Time</th>
+    </tr></thead><tbody>`;
+
+  filteredData.forEach(r => {
+    const resultHtml = r.is_correct === true
+      ? '<span class="correct-yes">✅ correct</span>'
+      : r.is_correct === false
+        ? '<span class="correct-no">❌ wrong</span>'
+        : '<span class="correct-null">👁 open</span>';
+
+    const time = r.submitted_at
+      ? new Date(r.submitted_at).toLocaleString('uk-UA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+      : '—';
+
+    html += `<tr>
+      <td><b>${r.student_name}</b></td>
+      <td><span class="badge badge-lesson">${r.lesson}</span></td>
+      <td><code style="font-size:0.8rem;">${r.exercise}</code></td>
+      <td style="color:var(--muted); font-size:0.82rem;">${r.question}</td>
+      <td style="max-width:220px; word-break:break-word;">${r.answer || '—'}</td>
+      <td>${resultHtml}</td>
+      <td style="color:var(--muted); font-size:0.78rem; white-space:nowrap;">${time}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  document.getElementById('answers-body').innerHTML = html;
+}
+
+// ===== HELPERS =====
+function filterByStudent(name) {
+  document.getElementById('filter-student').value = name;
+  switchTab('students');
+  applyFilters();
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+}
+
+function exportCSV() {
+  if (!filteredData.length) { alert('No data to export'); return; }
+  const cols = ['student_name','lesson','exercise','question','answer','is_correct','submitted_at'];
+  const rows = [cols.join(',')];
+  filteredData.forEach(r => {
+    rows.push(cols.map(c => {
+      const val = r[c] ?? '';
+      return '"' + String(val).replace(/"/g,'""') + '"';
+    }).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'outcomes_answers_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
