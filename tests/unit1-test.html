@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unit 1 Test — Outcomes Elementary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent:  #e8882a;
+      --accent2: #c96a15;
+      --blue:    #2e7ec1;
+      --blue2:   #1a5f9a;
+      --green:   #1a8044;
+      --red:     #c0392b;
+      --yellow:  #c87e08;
+      --text:    #1a1a30;
+      --textm:   #3d3d58;
+      --muted:   #6b7080;
+      --glass:   rgba(255,255,255,0.65);
+      --gborder: rgba(255,255,255,0.88);
+      --r:       14px;
+    }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=1600&q=80') center/cover fixed;
+      position: relative;
+    }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background: rgba(195,228,218,0.28);
+      pointer-events:none; z-index:0;
+    }
+    .main {
+      position:relative; z-index:1;
+      margin:0 auto; padding:36px 40px 60px;
+      max-width:900px; width:100%;
+    }
+    .glass {
+      background: var(--glass);
+      border: 1.5px solid var(--gborder);
+      border-radius: var(--r);
+      box-shadow: 0 8px 32px rgba(60,40,10,0.12);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    /* breadcrumb */
+    .bc { font-size:13px; color:rgba(26,26,48,.55); margin-bottom:18px; display:flex; align-items:center; gap:6px; font-weight:700; }
+    .bc a { color:rgba(26,26,48,.45); text-decoration:none; }
+    .bc a:hover { color:var(--text); }
+    /* header */
+    .ph { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px; flex-wrap:wrap; gap:12px; }
+    .pt { font-size:27px; font-weight:800; display:flex; align-items:center; gap:10px; }
+    .ps { font-size:14px; color:var(--muted); margin-top:4px; font-weight:700; }
+    .sbadge { background:var(--accent); color:#fff; font-size:14px; font-weight:800; padding:7px 18px; border-radius:20px; white-space:nowrap; box-shadow:0 3px 12px rgba(232,136,42,.35); }
+    /* name screen */
+    #nameScreen { max-width:500px; margin:60px auto 0; padding:40px 36px; }
+    #nameScreen h2 { font-size:21px; margin-bottom:8px; font-weight:800; }
+    #nameScreen p  { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:600; }
+    .tmeta { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+    .mchip { background:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.9); border-radius:8px; padding:6px 14px; font-size:13px; color:var(--muted); font-weight:700; }
+    .mchip span { color:var(--text); font-weight:800; }
+    .lbl { font-size:14px; color:var(--textm); margin-bottom:7px; display:block; font-weight:800; }
+    .ti {
+      width:100%; background:rgba(255,255,255,.78); border:1.5px solid rgba(255,255,255,.9);
+      border-radius:10px; padding:11px 16px; color:var(--text);
+      font-family:inherit; font-size:15px; font-weight:700;
+      outline:none; transition:border-color .2s, box-shadow .2s; margin-bottom:20px;
+    }
+    .ti:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(46,126,193,.15); }
+    .btn-start {
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff; border:none; border-radius:10px;
+      padding:12px 28px; font-size:15px; font-weight:800;
+      cursor:pointer; font-family:inherit;
+      box-shadow:0 4px 14px rgba(232,136,42,.4);
+      transition:opacity .15s, transform .1s;
+    }
+    .btn-start:hover { opacity:.9; transform:translateY(-1px); }
+    /* test body */
+    #testBody { display:none; }
+    .sb { margin-bottom:18px; overflow:hidden; }
+    .sh {
+      padding:15px 22px; border-bottom:1.5px solid rgba(255,255,255,.6);
+      display:flex; align-items:center; gap:12px;
+    }
+    .exbadge { background:rgba(109,40,217,.1); color:#6d28d9; border:1.5px solid rgba(109,40,217,.3); font-size:11px; font-weight:800; padding:4px 11px; border-radius:20px; letter-spacing:.06em; }
+    .stitle { font-size:14px; font-weight:700; color:var(--textm); }
+    .spts { margin-left:auto; font-size:13px; color:var(--muted); font-weight:700; }
+    .sbody { padding:20px 22px; }
+    .qb { margin-bottom:16px; }
+    .qb:last-child { margin-bottom:0; }
+    .ql { font-size:13px; color:var(--muted); margin-bottom:8px; font-weight:800; }
+    .ir { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:15px; font-weight:700; }
+    .ii {
+      background:rgba(255,255,255,.82); border:1.5px solid rgba(200,200,200,.55);
+      border-bottom:2.5px solid var(--accent); border-radius:8px 8px 0 0;
+      padding:7px 11px; color:var(--text); font-family:inherit; font-size:14px; font-weight:700;
+      outline:none; transition:border-color .2s;
+    }
+    .ii:focus { border-bottom-color:var(--blue); }
+    .ii.correct { border-bottom-color:var(--green)!important; background:rgba(26,128,68,.08); }
+    .ii.wrong   { border-bottom-color:var(--red)!important;   background:rgba(192,57,43,.08); }
+    .is {
+      background:rgba(255,255,255,.85); border:1.5px solid rgba(200,200,200,.55);
+      border-bottom:2.5px solid var(--accent); border-radius:8px 8px 0 0;
+      padding:7px 11px; color:var(--text); font-family:inherit; font-size:14px; font-weight:700;
+      outline:none; cursor:pointer; max-width:380px;
+    }
+    .is:focus { border-bottom-color:var(--blue); }
+    .is.correct { border-bottom-color:var(--green)!important; background:rgba(26,128,68,.08); }
+    .is.wrong   { border-bottom-color:var(--red)!important;   background:rgba(192,57,43,.08); }
+    /* match table */
+    .mt { width:100%; border-collapse:collapse; margin-top:8px; }
+    .mt td,.mt th { padding:9px 12px; font-size:14px; text-align:left; border:1px solid rgba(200,200,200,.45); font-weight:700; }
+    .mt th { background:rgba(255,255,255,.5); color:var(--muted); font-weight:800; font-size:12px; }
+    .mt td:first-child { color:var(--muted); width:36px; text-align:center; font-weight:800; }
+    .oo  { background:rgba(255,255,255,.35); }
+    .oe  { background:rgba(255,255,255,.15); }
+    /* categories */
+    .crow { display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; }
+    .ccol { flex:1; min-width:160px; }
+    .clbl { font-size:13px; color:var(--accent); font-weight:800; margin-bottom:8px; }
+    .wbank { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .wchip { background:rgba(255,255,255,.82); border:1.5px solid rgba(200,200,200,.55); border-radius:8px; padding:6px 14px; font-size:14px; font-weight:700; cursor:pointer; user-select:none; transition:background .15s, border-color .15s, opacity .15s; }
+    .wchip:hover:not(.used) { background:rgba(255,255,255,1); border-color:var(--blue); }
+    .wchip.used    { opacity:.28; pointer-events:none; }
+    .wchip.correct { border-color:var(--green); background:rgba(26,128,68,.1); }
+    .wchip.wrong   { border-color:var(--red);   background:rgba(192,57,43,.1); }
+    .cdrop { min-height:42px; border:2px dashed rgba(140,140,180,.4); border-radius:10px; padding:7px; display:flex; flex-wrap:wrap; gap:7px; transition:border-color .2s; background:rgba(255,255,255,.22); }
+    .cdrop.over { border-color:var(--blue); }
+    .dchip { background:rgba(255,255,255,.9); border:1.5px solid rgba(200,200,200,.55); border-radius:8px; padding:5px 12px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:7px; }
+    .dchip .rm { cursor:pointer; color:var(--muted); font-size:11px; }
+    .dchip .rm:hover { color:var(--red); }
+    /* odd */
+    .oopts { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .obtn { background:rgba(255,255,255,.76); border:1.5px solid rgba(200,200,200,.55); border-radius:10px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; color:var(--text); transition:background .15s, border-color .15s; }
+    .obtn:hover:not(:disabled) { background:rgba(255,255,255,1); border-color:var(--blue); }
+    .obtn.selected { border-color:var(--blue); background:rgba(46,126,193,.14); }
+    .obtn.correct  { border-color:var(--green)!important; background:rgba(26,128,68,.12)!important; }
+    .obtn.wrong    { border-color:var(--red)!important;   background:rgba(192,57,43,.12)!important; }
+    /* divider */
+    .sdiv { font-size:12px; font-weight:800; color:rgba(40,40,70,.45); letter-spacing:.1em; text-transform:uppercase; margin:24px 0 12px; }
+    .qdiv { border:none; border-top:1px solid rgba(200,200,200,.4); margin:14px 0; }
+    /* submit */
+    .subbar { margin-top:10px; padding:22px 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .subinfo { font-size:14px; color:var(--muted); font-weight:700; }
+    .btn-sub {
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff; border:none; border-radius:10px; padding:12px 32px; font-size:15px; font-weight:800;
+      cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(232,136,42,.4); transition:opacity .15s, transform .1s;
+    }
+    .btn-sub:hover { opacity:.9; transform:translateY(-1px); }
+    /* result */
+    #resultScreen { display:none; }
+    .rcard { padding:36px; text-align:center; margin-bottom:20px; }
+    .rscore { font-size:66px; font-weight:800; background:linear-gradient(135deg,var(--accent),#b84e0a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .rlbl { font-size:15px; color:var(--muted); margin-top:4px; font-weight:700; }
+    .rgrade { display:inline-block; margin-top:18px; padding:7px 24px; border-radius:20px; font-size:15px; font-weight:800; }
+    .grA { background:rgba(26,128,68,.12); color:#155a2e; border:2px solid rgba(26,128,68,.4); }
+    .grB { background:rgba(46,126,193,.12); color:#154d7a; border:2px solid rgba(46,126,193,.4); }
+    .grC { background:rgba(200,126,8,.12);  color:#7a4d00; border:2px solid rgba(200,126,8,.4); }
+    .grF { background:rgba(192,57,43,.12);  color:#7a1a10; border:2px solid rgba(192,57,43,.4); }
+    .fsec { padding:22px 26px; margin-bottom:18px; }
+    .fsec h3 { font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px; font-weight:800; }
+    .fta { width:100%; background:rgba(255,255,255,.78); border:1.5px solid rgba(200,200,200,.55); border-radius:10px; padding:11px 14px; color:var(--text); font-family:inherit; font-size:14px; font-weight:700; line-height:1.5; outline:none; resize:vertical; min-height:80px; transition:border-color .2s; }
+    .fta:focus { border-color:var(--blue); }
+    .btn-fb { background:rgba(255,255,255,.88); border:1.5px solid rgba(200,200,200,.55); color:var(--text); border-radius:10px; padding:10px 22px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; margin-top:12px; transition:background .15s, border-color .15s; }
+    .btn-fb:hover { background:rgba(255,255,255,1); border-color:var(--blue); }
+    .bgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin-top:14px; }
+    .bitem { background:rgba(255,255,255,.62); border:1.5px solid rgba(255,255,255,.88); border-radius:10px; padding:14px 16px; }
+    .bitem .blbl { font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700; }
+    .bitem .bsc { font-size:18px; font-weight:800; }
+    .bsc.full    { color:var(--green); }
+    .bsc.partial { color:var(--yellow); }
+    .bsc.zero    { color:var(--red); }
+    .smsg { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; font-weight:700; }
+    .smsg.ok  { color:var(--green); }
+    .smsg.err { color:var(--red); }
+    .btn-retry { background:linear-gradient(135deg,var(--blue),var(--blue2)); color:#fff; border:none; border-radius:10px; padding:12px 28px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(46,126,193,.35); transition:opacity .15s; }
+    .btn-retry:hover { opacity:.9; }
+    @media(max-width:720px){ .main{padding:18px 12px 40px;} .is{max-width:100%;} }
+  </style>
+</head>
+<body>
+<main class="main">
+  <div class="bc">
+    <a href="classes.html">My Classes</a>
+    <span style="opacity:.4">›</span>
+    <span>Unit 1: People and places</span>
+    <span style="opacity:.4">›</span>
+    <span style="color:var(--text)">Unit 1 Test</span>
+  </div>
+
+  <!-- NAME SCREEN -->
+  <div id="nameScreen" class="glass">
+    <div class="pt" style="margin-bottom:8px">📝 Unit 1 Test</div>
+    <p>Enter your name to begin. Your result will be saved automatically.</p>
+    <div class="tmeta">
+      <div class="mchip">Exercises: <span>8</span></div>
+      <div class="mchip">Points: <span>60</span></div>
+      <div class="mchip">Topic: <span>People &amp; Places</span></div>
+    </div>
+    <label class="lbl" for="sName">Your name</label>
+    <input class="ti" id="sName" type="text" placeholder="e.g. Maria Ivanova" autocomplete="off"/>
+    <button class="btn-start" onclick="startTest()">Start Test →</button>
+  </div>
+
+  <!-- TEST BODY -->
+  <div id="testBody">
+    <div class="ph">
+      <div>
+        <div class="pt">📝 Unit 1 Test</div>
+        <div class="ps">People and places · 60 points</div>
+      </div>
+      <div class="sbadge" id="liveScore">0 / 50</div>
+    </div>
+
+    <div class="sdiv">GRAMMAR</div>
+
+    <!-- EX 1 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 1</span><span class="stitle">Complete the dialogues with correct form of <em>be</em></span><span class="spts">/ 8 pts</span></div>
+      <div class="sbody">
+        <div class="qb"><div class="ql">Dialogue 1</div>
+          <div class="ir"><span>A: Hi, how</span><input class="ii" id="e1q1a" placeholder="are you" style="width:130px"/><span>?</span></div>
+          <div class="ir" style="margin-top:7px"><input class="ii" id="e1q1b" placeholder="I'm" style="width:100px"/><span>fine, thank you.</span></div>
+        </div>
+        <hr class="qdiv">
+        <div class="qb"><div class="ql">Dialogue 2</div>
+          <div class="ir"><span>A: Where</span><input class="ii" id="e1q2a" placeholder="is she" style="width:120px"/><span>from?</span></div>
+          <div class="ir" style="margin-top:7px"><input class="ii" id="e1q2b" placeholder="She's" style="width:100px"/><span>from Paris.</span></div>
+        </div>
+        <hr class="qdiv">
+        <div class="qb"><div class="ql">Dialogue 3</div>
+          <div class="ir"><span>A: How old</span><input class="ii" id="e1q3a" placeholder="is Dan" style="width:120px"/><span>?</span></div>
+          <div class="ir" style="margin-top:7px"><input class="ii" id="e1q3b" placeholder="He's" style="width:80px"/><span>25.</span></div>
+        </div>
+        <hr class="qdiv">
+        <div class="qb"><div class="ql">Dialogue 4</div>
+          <div class="ir"><span>A:</span><input class="ii" id="e1q4a" placeholder="Are your parents" style="width:190px"/><span>from Costa Rica?</span></div>
+          <div class="ir" style="margin-top:7px"><span>B: No,</span><input class="ii" id="e1q4b" placeholder="they're" style="width:110px"/><span>from Spain.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EX 2 — full phrases in dropdown -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 2</span><span class="stitle">Match question beginnings (1–6) to endings (a–f)</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <table class="mt">
+          <thead><tr><th>#</th><th>Beginning</th><th>Choose the ending</th></tr></thead>
+          <tbody id="ex2body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EX 3 — full phrases in dropdown -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 3</span><span class="stitle">Match answers (a–f) to questions 1–6 from Exercise 2</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <table class="mt">
+          <thead><tr><th>#</th><th>Question</th><th>Choose the answer</th></tr></thead>
+          <tbody id="ex3body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EX 4 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 4</span><span class="stitle">Complete: there's / there are / Are there / Is there / there isn't / there aren't</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <div class="ir" style="margin-bottom:10px"><span>Shotaro: <sup>1</sup></span>
+          <select class="is" id="e4q1"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>any interesting places in your town?</span></div>
+        <div class="ir" style="margin-bottom:10px"><span>Amy: Yes, <sup>2</sup></span>
+          <select class="is" id="e4q2"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>an old church in the centre.</span></div>
+        <div class="ir" style="margin-bottom:10px"><span>Shotaro: <sup>3</sup></span>
+          <select class="is" id="e4q3"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>a park?</span></div>
+        <div class="ir" style="margin-bottom:10px"><span>Amy: No, <sup>4</sup></span>
+          <select class="is" id="e4q4"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>a park, but <sup>5</sup></span>
+          <select class="is" id="e4q5"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>some nice gardens near the river.</span></div>
+        <div class="ir"><span>Shotaro: <sup>6</sup></span>
+          <select class="is" id="e4q6"><option value="">—</option><option>there's</option><option>there are</option><option>Are there</option><option>Is there</option><option>there isn't</option><option>there aren't</option></select>
+          <span>a university? Amy: No, students go to the next town.</span></div>
+      </div>
+    </div>
+
+    <div class="sdiv">VOCABULARY</div>
+
+    <!-- EX 5 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 5</span><span class="stitle">Put the words in the correct categories</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:700;">Select a word, then click a category to place it.</div>
+        <div class="wbank" id="wordBank5">
+          <div class="wchip" data-word="Brazil" onclick="clickWord5(this)">Brazil</div>
+          <div class="wchip" data-word="Central America" onclick="clickWord5(this)">Central America</div>
+          <div class="wchip" data-word="China" onclick="clickWord5(this)">China</div>
+          <div class="wchip" data-word="Kenya" onclick="clickWord5(this)">Kenya</div>
+          <div class="wchip" data-word="Saudi Arabia" onclick="clickWord5(this)">Saudi Arabia</div>
+          <div class="wchip" data-word="Asia" onclick="clickWord5(this)">Asia</div>
+        </div>
+        <div class="crow">
+          <div class="ccol"><div class="clbl">🌍 Countries</div><div class="cdrop" id="catCountries" data-cat="countries"></div></div>
+          <div class="ccol"><div class="clbl">🗺️ Parts of the world</div><div class="cdrop" id="catParts" data-cat="parts"></div></div>
+        </div>
+        <div id="activeWord5" style="display:none;font-size:13px;color:var(--blue);margin-top:10px;font-weight:800;">
+          Selected: <strong id="activeWordName5"></strong> → click a category
+        </div>
+      </div>
+    </div>
+
+    <!-- EX 6 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 6</span><span class="stitle">Complete the sentences. The first letter is given.</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <div class="qb"><div class="ir"><span>1. A waiter works in a <strong style="color:var(--accent)">r</strong></span><input class="ii" id="e6q1" placeholder="…" style="width:150px"/><span>.</span></div></div>
+        <div class="qb"><div class="ir"><span>2. A <strong style="color:var(--accent)">n</strong></span><input class="ii" id="e6q2" placeholder="…" style="width:120px"/><span>works in a hospital.</span></div></div>
+        <div class="qb"><div class="ir"><span>3. A teacher works at a <strong style="color:var(--accent)">s</strong></span><input class="ii" id="e6q3" placeholder="…" style="width:120px"/><span>.</span></div></div>
+        <div class="qb"><div class="ir"><span>4. A <strong style="color:var(--accent)">s</strong></span><input class="ii" id="e6q4a" placeholder="…" style="width:85px"/><span>a</span><input class="ii" id="e6q4b" placeholder="…" style="width:130px"/><span>works in a clothes shop.</span></div></div>
+        <div class="qb"><div class="ir"><span>5. A police officer works at a <strong style="color:var(--accent)">p</strong></span><input class="ii" id="e6q5a" placeholder="…" style="width:100px"/><span>s</span><input class="ii" id="e6q5b" placeholder="…" style="width:105px"/><span>.</span></div></div>
+        <div class="qb"><div class="ir"><span>6. A <strong style="color:var(--accent)">d</strong></span><input class="ii" id="e6q6" placeholder="…" style="width:130px"/><span>works at home in a studio.</span></div></div>
+      </div>
+    </div>
+
+    <!-- EX 7 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 7</span><span class="stitle">Write the opposite of the bold adjective</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody">
+        <div class="qb"><div class="ir"><span>1. I live in a <strong>busy</strong> city, not a <strong style="color:var(--accent)">q</strong></span><input class="ii" id="e7q1" placeholder="…" style="width:120px"/><span>village.</span></div></div>
+        <div class="qb"><div class="ir"><span>2. My country is <strong style="color:var(--accent)">h</strong></span><input class="ii" id="e7q2" placeholder="…" style="width:110px"/><span>in summer but very <strong>cold</strong> in winter.</span></div></div>
+        <div class="qb"><div class="ir"><span>3. My parents have a <strong>big</strong> house, but I have a <strong style="color:var(--accent)">s</strong></span><input class="ii" id="e7q3" placeholder="…" style="width:110px"/><span>flat.</span></div></div>
+        <div class="qb"><div class="ir"><span>4. Cafés are <strong>cheap</strong>, but restaurants are <strong style="color:var(--accent)">e</strong></span><input class="ii" id="e7q4" placeholder="…" style="width:140px"/><span>.</span></div></div>
+        <div class="qb"><div class="ir"><span>5. Beaches are <strong>clean</strong>, but the city beach is <strong style="color:var(--accent)">d</strong></span><input class="ii" id="e7q5" placeholder="…" style="width:110px"/><span>.</span></div></div>
+        <div class="qb"><div class="ir"><span>6. My life is <strong>interesting</strong> but my job is <strong style="color:var(--accent)">b</strong></span><input class="ii" id="e7q6" placeholder="…" style="width:110px"/><span>.</span></div></div>
+      </div>
+    </div>
+
+    <!-- EX 8 -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 8</span><span class="stitle">Odd one out — which word is different?</span><span class="spts">/ 6 pts</span></div>
+      <div class="sbody"><div id="ex8"></div></div>
+    </div>
+
+    <!-- EX 9 — Present Simple: positive, negative, question -->
+    <div class="sb glass">
+      <div class="sh"><span class="exbadge">EXERCISE 9</span><span class="stitle">Put the verb in brackets in the correct Present Simple form</span><span class="spts">/ 10 pts</span></div>
+      <div class="sbody">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;font-weight:700;">
+          Complete the dialogue. Use positive ✚, negative ✗ or question ❓ forms as shown.
+        </div>
+
+        <div style="background:rgba(255,255,255,0.35);border-radius:10px;padding:16px 18px;line-height:2.2;font-size:15px;font-weight:700;">
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Anna: Hi Marco! Where</span>
+            <input class="ii" id="e9q1" placeholder="…" style="width:110px"/>
+            <span>you <strong style="color:var(--textm)">(live)</strong>?  ❓</span>
+          </div>
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Marco: I</span>
+            <input class="ii" id="e9q2" placeholder="…" style="width:100px"/>
+            <span>in Rome, but my family</span>
+            <input class="ii" id="e9q3" placeholder="…" style="width:100px"/>
+            <span>in Naples. <strong style="color:var(--textm)">(live ✚ / live ✚)</strong></span>
+          </div>
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Anna: What</span>
+            <input class="ii" id="e9q4" placeholder="…" style="width:100px"/>
+            <span>you <strong style="color:var(--textm)">(do)</strong>?  ❓</span>
+          </div>
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Marco: I</span>
+            <input class="ii" id="e9q5" placeholder="…" style="width:90px"/>
+            <span>in a café. I</span>
+            <input class="ii" id="e9q6" placeholder="…" style="width:100px"/>
+            <span>the food — it's terrible! <strong style="color:var(--textm)">(work ✚ / not like ✗)</strong></span>
+          </div>
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Anna:</span>
+            <input class="ii" id="e9q7" placeholder="…" style="width:90px"/>
+            <span>the café</span>
+            <input class="ii" id="e9q8" placeholder="…" style="width:90px"/>
+            <span>good coffee?  <strong style="color:var(--textm)">(do ❓ / serve ✚)</strong></span>
+          </div>
+
+          <div class="ir" style="margin-bottom:2px">
+            <span>Marco: Yes, the coffee</span>
+            <input class="ii" id="e9q9" placeholder="…" style="width:100px"/>
+            <span>great. But the manager</span>
+            <input class="ii" id="e9q10" placeholder="…" style="width:100px"/>
+            <span>English. <strong style="color:var(--textm)">(taste ✚ / not speak ✗)</strong></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="subbar glass">
+      <div class="subinfo">Complete all exercises, then submit.</div>
+      <button class="btn-sub" onclick="submitTest()">Submit Test ✓</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="resultScreen">
+    <div class="ph">
+      <div><div class="pt">📝 Unit 1 Test — Results</div><div class="ps" id="resultName"></div></div>
+    </div>
+    <div class="rcard glass">
+      <div class="rscore" id="resultScore">0</div>
+      <div class="rlbl">out of <span id="resultMax">60</span> points</div>
+      <div id="resultGrade" class="rgrade">–</div>
+    </div>
+    <div class="fsec glass">
+      <h3>📊 Breakdown by exercise</h3>
+      <div class="bgrid" id="breakdownGrid"></div>
+    </div>
+    <div class="fsec glass">
+      <h3>💬 Teacher feedback <span style="font-size:13px;font-weight:600;color:var(--muted)">(optional)</span></h3>
+      <textarea class="fta" id="teacherFeedback" placeholder="Add comments for this student…"></textarea>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <button class="btn-fb" onclick="saveFeedback()">Save feedback</button>
+        <span id="feedbackMsg" class="smsg"></span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:4px;">
+      <div id="saveStatus" class="smsg"></div>
+      <button class="btn-retry" onclick="retryTest()">Try again ↺</button>
+      <a href="classes.html" style="color:var(--muted);font-size:14px;font-weight:800;text-decoration:none;">← Back to classes</a>
+    </div>
+  </div>
+</main>
+
+<script>
+const SUPABASE_URL = 'https://ihfmroksigkimufoxope.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImloZm1yb2tzaWdraW11Zmp4b3BlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MDk0NjgsImV4cCI6MjA4ODk4NTQ2OH0.hFOWUdgXBpKbqo0uUbuINVv8WGeirZFMZcBejMkbKwU';
+async function supaInsert(t,d){ return fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(d)}); }
+async function supaUpdate(t,id,d){ return fetch(`${SUPABASE_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify(d)}); }
+
+// DATA
+const E2_ENDINGS = [
+  {val:'a',txt:'a) do you go to the office?'},
+  {val:'b',txt:'b) you like your job?'},
+  {val:'c',txt:'c) do you finish work?'},
+  {val:'d',txt:'d) languages do you speak?'},
+  {val:'e',txt:'e) do you work with?'},
+  {val:'f',txt:'f) do you live?'}
+];
+const E2_BEGINS = ['Where','How many','How','Who','Do','What time'];
+const E3_ANSWERS = [
+  {val:'a',txt:"a) At about 6 o'clock in the evening."},
+  {val:'b',txt:'b) I take the train.'},
+  {val:'c',txt:'c) I work with my brother.'},
+  {val:'d',txt:'d) I live in Sydney.'},
+  {val:'e',txt:'e) Just one \u2013 English.'},
+  {val:'f',txt:"f) Yes, it's very interesting."}
+];
+const E3_QUESTIONS = ['Where do you live?','How many languages do you speak?','How do you go to the office?','Who do you work with?','Do you like your job?','What time do you finish work?'];
+
+const ANSWERS = {
+  e1:{ q1a:['are you'], q1b:["i'm","i am"], q2a:['is she'], q2b:["she's","she is"], q3a:['is dan'], q3b:["he's","he is"], q4a:['are your parents'], q4b:["they're","they are"] },
+  e2:{ q1:'f', q2:'d', q3:'a', q4:'e', q5:'b', q6:'c' },
+  e3:{ q1:'d', q2:'e', q3:'b', q4:'c', q5:'f', q6:'a' },
+  e4:{ q1:'Are there', q2:"there's", q3:'Is there', q4:"there isn't", q5:'there are', q6:'Is there' },
+  e5:{ countries:['Brazil','China','Kenya','Saudi Arabia'], parts:['Central America','Asia'] },
+  e6:{ q1:['restaurant'], q2:['nurse'], q3:['school'], q4a:['shop'], q4b:['assistant'], q5a:['police'], q5b:['station'], q6:['designer'] },
+  e7:{ q1:['quiet'], q2:['hot'], q3:['small'], q4:['expensive'], q5:['dirty'], q6:['boring'] },
+  e8:[
+    {words:['mosque','church','cathedral','hospital'],odd:'hospital'},
+    {words:['cinema','doctor','park','shop'],odd:'doctor'},
+    {words:['town','school','village','city'],odd:'school'},
+    {words:['nurse','boring','famous','safe'],odd:'nurse'},
+    {words:['kids','people','hours','wives'],odd:'hours'},
+    {words:['French','Japan','Spain','Brazil'],odd:'French'}
+  ],
+  e9:{
+    q1:['do'],
+    q2:['live'],
+    q3:['lives'],
+    q4:['do'],
+    q5:['work'],
+    q6:["don't like","do not like"],
+    q7:['does'],
+    q8:['serve'],
+    q9:['tastes'],
+    q10:["doesn't speak","does not speak"]
+  }
+};
+
+let studentName='', resultId=null;
+let ex5={active:null,placed:{}}, ex8Sel={};
+
+// Build Ex2 table
+(function(){
+  const tb=document.getElementById('ex2body');
+  E2_BEGINS.forEach((beg,i)=>{
+    const opts=E2_ENDINGS.map(e=>`<option value="${e.val}">${e.txt}</option>`).join('');
+    tb.innerHTML+=`<tr class="${i%2===0?'oo':'oe'}"><td>${i+1}</td><td>${beg}</td><td><select class="is" id="e2q${i+1}"><option value="">— choose —</option>${opts}</select></td></tr>`;
+  });
+})();
+// Build Ex3 table
+(function(){
+  const tb=document.getElementById('ex3body');
+  E3_QUESTIONS.forEach((q,i)=>{
+    const opts=E3_ANSWERS.map(a=>`<option value="${a.val}">${a.txt}</option>`).join('');
+    tb.innerHTML+=`<tr class="${i%2===0?'oo':'oe'}"><td>${i+1}</td><td>${q}</td><td><select class="is" id="e3q${i+1}"><option value="">— choose —</option>${opts}</select></td></tr>`;
+  });
+})();
+// Build Ex8
+(function(){
+  const c=document.getElementById('ex8');
+  ANSWERS.e8.forEach((it,i)=>{
+    const d=document.createElement('div'); d.className='qb';
+    d.innerHTML=`<div class="ql">Group ${i+1}</div><div class="oopts" id="odd${i}">${it.words.map(w=>`<button class="obtn" data-word="${w}" onclick="selOdd(${i},this)">${w}</button>`).join('')}</div>`;
+    if(i<ANSWERS.e8.length-1){const hr=document.createElement('hr');hr.className='qdiv';c.appendChild(d);c.appendChild(hr);}else c.appendChild(d);
+  });
+})();
+
+function startTest(){
+  studentName=document.getElementById('sName').value.trim();
+  if(!studentName){alert('Please enter your name.');return;}
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('testBody').style.display='block';
+}
+document.getElementById('sName').addEventListener('keydown',e=>{if(e.key==='Enter')startTest();});
+
+function selOdd(gi,btn){
+  document.getElementById('odd'+gi).querySelectorAll('.obtn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected'); ex8Sel[gi]=btn.dataset.word;
+}
+
+function clickWord5(chip){
+  const w=chip.dataset.word;
+  if(chip.classList.contains('used'))return;
+  if(ex5.active===w){ex5.active=null;document.getElementById('activeWord5').style.display='none';chip.style.borderColor='';return;}
+  document.querySelectorAll('#wordBank5 .wchip').forEach(c=>c.style.borderColor='');
+  ex5.active=w; chip.style.borderColor='var(--blue)';
+  document.getElementById('activeWord5').style.display='block';
+  document.getElementById('activeWordName5').textContent=w;
+}
+document.querySelectorAll('.cdrop').forEach(drop=>{
+  drop.addEventListener('click',()=>{
+    if(!ex5.active)return;
+    const w=ex5.active,cat=drop.dataset.cat;
+    if(ex5.placed[w]){const od=document.querySelector(`.cdrop[data-cat="${ex5.placed[w]}"]`);od.querySelectorAll('.dchip').forEach(dc=>{if(dc.dataset.word===w)dc.remove();});}
+    ex5.placed[w]=cat;
+    document.querySelectorAll('#wordBank5 .wchip').forEach(c=>{if(c.dataset.word===w){c.classList.add('used');c.style.borderColor='';}});
+    const ch=document.createElement('div');ch.className='dchip';ch.dataset.word=w;
+    ch.innerHTML=`${w} <span class="rm" onclick="rmCat('${w}','${cat}',this)">✕</span>`;
+    drop.appendChild(ch); ex5.active=null; document.getElementById('activeWord5').style.display='none';
+  });
+});
+function rmCat(w,cat,rm){rm.closest('.dchip').remove();delete ex5.placed[w];document.querySelectorAll('#wordBank5 .wchip').forEach(c=>{if(c.dataset.word===w)c.classList.remove('used');});}
+
+function norm(s){return String(s).trim().toLowerCase().replace(/['']/g,"'");}
+function sc1(){let s=0;[['e1q1a',ANSWERS.e1.q1a],['e1q1b',ANSWERS.e1.q1b],['e1q2a',ANSWERS.e1.q2a],['e1q2b',ANSWERS.e1.q2b],['e1q3a',ANSWERS.e1.q3a],['e1q3b',ANSWERS.e1.q3b],['e1q4a',ANSWERS.e1.q4a],['e1q4b',ANSWERS.e1.q4b]].forEach(([id,ans])=>{const v=norm(document.getElementById(id).value);if(ans.some(a=>norm(a)===v||v.includes(norm(a))))s++;});return s;}
+function sc2(){let s=0;for(let i=1;i<=6;i++)if(document.getElementById(`e2q${i}`).value===ANSWERS.e2[`q${i}`])s++;return s;}
+function sc3(){let s=0;for(let i=1;i<=6;i++)if(document.getElementById(`e3q${i}`).value===ANSWERS.e3[`q${i}`])s++;return s;}
+function sc4(){let s=0;for(let i=1;i<=6;i++)if(document.getElementById(`e4q${i}`).value===ANSWERS.e4[`q${i}`])s++;return s;}
+function sc5(){let s=0;const p=ex5.placed;ANSWERS.e5.countries.forEach(w=>{if(p[w]==='countries')s++;});ANSWERS.e5.parts.forEach(w=>{if(p[w]==='parts')s++;});return s;}
+function sc6(){let s=0;const chk=(id,ans)=>ans.some(a=>norm(document.getElementById(id).value).includes(norm(a)));if(chk('e6q1',ANSWERS.e6.q1))s++;if(chk('e6q2',ANSWERS.e6.q2))s++;if(chk('e6q3',ANSWERS.e6.q3))s++;if(chk('e6q4a',ANSWERS.e6.q4a)||chk('e6q4b',ANSWERS.e6.q4b))s++;if(chk('e6q5a',ANSWERS.e6.q5a)&&chk('e6q5b',ANSWERS.e6.q5b))s++;if(chk('e6q6',ANSWERS.e6.q6))s++;return s;}
+function sc7(){let s=0;for(let i=1;i<=6;i++){const v=norm(document.getElementById(`e7q${i}`).value);if(ANSWERS.e7[`q${i}`].some(a=>norm(a)===v||v.includes(norm(a))))s++;}return s;}
+function sc8(){let s=0;ANSWERS.e8.forEach((it,i)=>{if(ex8Sel[i]===it.odd)s++;});return s;}
+function sc9(){
+  let s=0;
+  for(let i=1;i<=10;i++){
+    const v=norm(document.getElementById(`e9q${i}`).value);
+    const ans=ANSWERS.e9[`q${i}`];
+    if(ans.some(a=>norm(a)===v)) s++;
+  }
+  return s;
+}
+
+function hilite(){
+  [['e1q1a',ANSWERS.e1.q1a],['e1q1b',ANSWERS.e1.q1b],['e1q2a',ANSWERS.e1.q2a],['e1q2b',ANSWERS.e1.q2b],['e1q3a',ANSWERS.e1.q3a],['e1q3b',ANSWERS.e1.q3b],['e1q4a',ANSWERS.e1.q4a],['e1q4b',ANSWERS.e1.q4b]].forEach(([id,ans])=>{const el=document.getElementById(id),v=norm(el.value),ok=ans.some(a=>norm(a)===v||v.includes(norm(a)));el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;});
+  for(let i=1;i<=6;i++){let el=document.getElementById(`e2q${i}`),ok=el.value===ANSWERS.e2[`q${i}`];el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;}
+  for(let i=1;i<=6;i++){let el=document.getElementById(`e3q${i}`),ok=el.value===ANSWERS.e3[`q${i}`];el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;}
+  for(let i=1;i<=6;i++){let el=document.getElementById(`e4q${i}`),ok=el.value===ANSWERS.e4[`q${i}`];el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;}
+  Object.entries(ex5.placed).forEach(([w,cat])=>{const ok=ANSWERS.e5[cat]&&ANSWERS.e5[cat].includes(w);document.querySelectorAll('#wordBank5 .wchip').forEach(c=>{if(c.dataset.word===w)c.classList.add(ok?'correct':'wrong');});});
+  const e6c=(id,ans)=>{const el=document.getElementById(id),v=norm(el.value),ok=ans.some(a=>norm(a)===v||v.includes(norm(a)));el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;};
+  e6c('e6q1',ANSWERS.e6.q1);e6c('e6q2',ANSWERS.e6.q2);e6c('e6q3',ANSWERS.e6.q3);e6c('e6q4a',ANSWERS.e6.q4a);e6c('e6q4b',ANSWERS.e6.q4b);e6c('e6q5a',ANSWERS.e6.q5a);e6c('e6q5b',ANSWERS.e6.q5b);e6c('e6q6',ANSWERS.e6.q6);
+  for(let i=1;i<=6;i++){const el=document.getElementById(`e7q${i}`),v=norm(el.value),ok=ANSWERS.e7[`q${i}`].some(a=>norm(a)===v||v.includes(norm(a)));el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;}
+  ANSWERS.e8.forEach((it,i)=>{document.getElementById('odd'+i).querySelectorAll('.obtn').forEach(btn=>{btn.disabled=true;if(btn.dataset.word===it.odd)btn.classList.add('correct');else if(btn.classList.contains('selected'))btn.classList.add('wrong');});});
+  for(let i=1;i<=10;i++){const el=document.getElementById(`e9q${i}`),v=norm(el.value),ans=ANSWERS.e9[`q${i}`],ok=ans.some(a=>norm(a)===v);el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);el.disabled=true;}
+}
+
+async function submitTest(){
+  const scores={ex1:sc1(),ex2:sc2(),ex3:sc3(),ex4:sc4(),ex5:sc5(),ex6:sc6(),ex7:sc7(),ex8:sc8(),ex9:sc9()};
+  const total=Object.values(scores).reduce((a,b)=>a+b,0);
+  const maxTotal=60;
+  hilite();
+  document.getElementById('testBody').style.display='none';
+  document.getElementById('resultScreen').style.display='block';
+  document.getElementById('resultScore').textContent=total;
+  document.getElementById('resultName').textContent='Student: '+studentName;
+  document.getElementById('resultMax').textContent=maxTotal;
+  const pct=(total/maxTotal)*100, ge=document.getElementById('resultGrade');
+  if(pct>=90){ge.textContent='🏆 Excellent — A';ge.className='rgrade grA';}
+  else if(pct>=70){ge.textContent='👍 Good — B';ge.className='rgrade grB';}
+  else if(pct>=50){ge.textContent='📚 Pass — C';ge.className='rgrade grC';}
+  else{ge.textContent='💪 Keep studying — F';ge.className='rgrade grF';}
+  const bd=document.getElementById('breakdownGrid');
+  [8,6,6,6,6,6,6,6,10].forEach((mx,i)=>{
+    const s=[scores.ex1,scores.ex2,scores.ex3,scores.ex4,scores.ex5,scores.ex6,scores.ex7,scores.ex8,scores.ex9][i];
+    const cls=s===mx?'full':s>0?'partial':'zero';
+    const lbl=['Grammar 1','Matching','Match Ans','There is/are','Countries','Jobs','Opposites','Odd one out','Present Simple'][i];
+    bd.innerHTML+=`<div class="bitem"><div class="blbl">${lbl}</div><div class="bsc ${cls}">${s} / ${mx}</div></div>`;
+  });
+  const sv=document.getElementById('saveStatus');sv.textContent='⏳ Saving…';
+  try{
+    const payload={student_name:studentName,unit:1,total_score:total,max_score:maxTotal,ex1:scores.ex1,ex2:scores.ex2,ex3:scores.ex3,ex4:scores.ex4,ex5:scores.ex5,ex6:scores.ex6,ex7:scores.ex7,ex8:scores.ex8,ex9:scores.ex9,submitted_at:new Date().toISOString()};
+    const res=await supaInsert('unit_tests',payload);
+    if(res.ok){const j=await res.json();resultId=j[0]?.id||null;sv.textContent='✅ Result saved';sv.className='smsg ok';}
+    else{const e=await res.text();sv.textContent='⚠️ Not saved: '+e.slice(0,80);sv.className='smsg err';}
+  }catch(e){sv.textContent='⚠️ Network error';sv.className='smsg err';}
+}
+
+async function saveFeedback(){
+  const fb=document.getElementById('teacherFeedback').value.trim();
+  const msg=document.getElementById('feedbackMsg');
+  if(!fb){msg.textContent='⚠️ Please write something first';msg.className='smsg err';return;}
+  msg.textContent='⏳ Saving…';msg.className='smsg';
+  try{
+    let res;
+    if(resultId){ res=await supaUpdate('unit_tests',resultId,{teacher_feedback:fb}); }
+    else { res=await supaInsert('unit_tests',{student_name:studentName||'(unknown)',unit:1,teacher_feedback:fb,submitted_at:new Date().toISOString()}); }
+    if(res.ok){msg.textContent='✅ Saved';msg.className='smsg ok';}
+    else{msg.textContent='⚠️ Error saving';msg.className='smsg err';}
+  }catch{msg.textContent='⚠️ Network error';msg.className='smsg err';}
+}
+
+function retryTest(){location.reload();}
+</script>
+</body>
+</html>
