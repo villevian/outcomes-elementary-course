@@ -12,7 +12,7 @@ ST = json.load(open(sys.argv[2], encoding="utf-8")) if len(sys.argv) > 2 else No
 UNITS = [
     {"n": 8, "title": "Plans", "lessons": [
         {"id": "8-0", "code": "8", "title": "Unit opener", "aims": ["discuss plans", "free time and things to do this week"], "pages": ["lesson"]},
-        {"id": "8a", "code": "8A", "title": "What are your plans?", "aims": ["vocabulary: plans for the week", "grammar: going to", "making suggestions: How about …?"], "pages": ["lesson"]},
+        {"id": "8a", "code": "8A", "title": "What are your plans?", "aims": ["vocabulary: plans for the week", "grammar: going to", "making suggestions: How about …?"], "pages": ["lesson", "extra"]},
         {"id": "8b", "code": "8B", "title": "For and against", "aims": ["vocabulary: discussing plans", "reading: a local website discussion", "agreeing / disagreeing with plans"], "pages": ["lesson"]},
         {"id": "8c", "code": "8C", "title": "Hopes and dreams", "aims": ["vocabulary: in my life", "grammar: would like to", "speaking task: improve a place you know"], "pages": ["lesson"]},
     ]},
