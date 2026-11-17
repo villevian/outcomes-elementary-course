@@ -6,7 +6,11 @@ page(code_label, title, tag, aims, lesson_key, student_code, sections, key, voca
   sections: list of (nav_label, html)
   key: {data-k: [accepted answers]}; prefix before the last "_" = one exercise (chkSet("e3") checks all e3_*)
 """
-import json, html as H
+import json, re, html as H
+try:
+    from dict_unit8 import DICT
+except Exception:
+    DICT = {}
 
 def esc(s): return H.escape(s, quote=True)
 
@@ -15,12 +19,19 @@ def page(num, title, tag, aims, lesson_key, code, sections, key, vocab=None, ext
     body = "".join('<section id="s%d" class="sec%s">%s</section>' % (i + 1, " on" if i == 0 else "", h) for i, (_, h) in enumerate(sections))
     voc = ""
     if vocab:
-        voc = ('<details class="voc" open><summary>📖 Vocabulary of this lesson — натисни, щоб сховати / показати</summary><div class="vgs">%s</div></details>'
+        voc = ('<details class="voc" open><summary>📖 Vocabulary of this lesson — натисни на слово: переклад, транскрипція, колокації, приклади</summary><div class="vgs">%s</div></details>'
                % "".join('<div class="vg"><h4>%s</h4>%s</div>' % (t, "".join('<span data-t="%s" class="sw">%s</span>' % (esc(w), w) for w in ws)) for t, ws in vocab))
+    wd = {}
+    for _, ws in (vocab or []):
+        for w in ws:
+            if w in DICT:
+                ua, ipa, col, exs = DICT[w]
+                wd[w] = {"ua": ua, "ipa": ipa, "col": col, "ex": [H.escape(e).replace("**", "\u0001") for e in exs]}
+    wdjs = json.dumps(wd, ensure_ascii=False).replace("\\u0001", "**")
     aims_html = "".join("<li>%s</li>" % a for a in aims)
     out = TPL
     for a, b in (("__NUM__", num), ("__TITLE__", title), ("__TAG__", tag), ("__AIMS__", aims_html), ("__VOC__", voc), ("__NAV__", nav),
-                 ("__BODY__", body), ("__LESSON__", lesson_key), ("__CODE__", code), ("__KEY__", json.dumps(key, ensure_ascii=False)), ("__XJS__", extra_js)):
+                 ("__BODY__", body), ("__LESSON__", lesson_key), ("__CODE__", code), ("__KEY__", json.dumps(key, ensure_ascii=False)), ("__XJS__", extra_js), ("__WD__", wdjs)):
         out = out.replace(a, b)
     return out
 
@@ -97,6 +108,11 @@ textarea.g{width:100%;min-height:80px;font:inherit;font-size:16.5px;border:1.5px
 .done{display:none;margin-top:10px;background:#eaf7ee;color:#1e6b3d;padding:10px 14px;border-radius:6px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:6px 30px}.hint{font-size:14.5px;color:var(--grey)}
 .out{display:none;background:#fffdf3;border:1.5px solid var(--y);padding:10px 16px;margin-top:10px}.out.show{display:block}
+.wcov{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:50;align-items:center;justify-content:center;padding:16px}.wcov.show{display:flex}
+.wc{background:#fff;border:2px solid var(--y);box-shadow:0 10px 30px rgba(0,0,0,.15);max-width:520px;width:100%;max-height:88vh;overflow:auto;padding:18px 22px;position:relative}
+.wc .x{position:absolute;top:8px;right:10px;border:0;background:none;font-size:26px;cursor:pointer;color:#888}.wc h3{margin:0;font:700 30px "Barlow Condensed","Arial Narrow",sans-serif;display:flex;align-items:center;gap:8px;padding-right:30px}
+.wc .ipa{color:var(--grey);font-size:16px;margin:2px 0}.wc .tr{background:var(--y2);padding:6px 12px;margin:10px 0;font-weight:600}.wc h4{margin:14px 0 4px;color:var(--sky);font-size:13px;text-transform:uppercase;letter-spacing:.4px}
+.wc ul{margin:0;padding-left:20px}.wc li{margin:4px 0}.wc li b{color:var(--pur)}
 footer{max-width:1060px;margin:0 auto;padding:0 24px 30px;font-size:12.5px;color:#77787b}
 @media(max-width:800px){.cards,.two,.art .cols{grid-template-columns:1fr 1fr}.aims{flex-direction:column}.aims .box{min-width:0}header h1{font-size:36px}}
 @media(max-width:560px){.cards,.two,.art .cols{grid-template-columns:1fr}}
@@ -109,9 +125,11 @@ footer{max-width:1060px;margin:0 auto;padding:0 24px 30px;font-size:12.5px;color
 <nav>__NAV__</nav><main>__BODY__
 <div class="ctl" style="margin-top:28px"><button class="btn" id="submit">Send to my teacher</button><span class="st" id="st2"></span></div>
 <div class="done" id="done">✓ Sent to your teacher. You can still change your answers — they save automatically.</div></main></div>
+<div class="wcov" id="wcov"><div class="wc"><button class="x" onclick="closeW()">×</button><div id="wcb"></div></div></div>
 <footer>Outcomes A1 · interactive version for private lessons · Valentyna Hordiienko · Middle Learning Architect</footer>
 <script>
 const SB_URL="https://zuegojpfhgigsvyrnymt.supabase.co",SB_KEY="sb_publishable__Xn8xRhne9Hp2ckaXu6xCQ_MOe52bng";
+const WD=__WD__;
 const LESSON="__LESSON__";const STUDENT_CODE="__CODE__";const KEY=__KEY__;
 const rpc=(f,b)=>fetch(SB_URL+"/rest/v1/rpc/"+f,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify(b)}).then(async r=>{const t=await r.text();if(!r.ok)throw new Error(t);return t?JSON.parse(t):null});
 const $=id=>document.getElementById(id);let student="",timer=null,submitted=false,ready=false;
@@ -142,7 +160,16 @@ if("speechSynthesis" in window){speechSynthesis.onvoiceschanged=loadV;loadV()}
 function utt(t,i){const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=.88;if(VO.length)u.voice=VO[(i||0)%VO.length];if(i)u.pitch=.85;return u}
 function say(t){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();speechSynthesis.speak(utt(t,0))}
 function playDlg(lines){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();lines.forEach(([w,t])=>speechSynthesis.speak(utt(t,w==="A"?0:1)))}
-document.addEventListener("click",e=>{const b=e.target.closest(".say,.vg span");if(!b)return;if(b.dataset.d)playDlg(JSON.parse(b.dataset.d));else if(b.dataset.t)say(b.dataset.t)});
+const eh=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sb=t=>'<button class="say" data-t="'+eh(t)+'">🔊</button>';
+function openW(w){const d=WD[w];if(!d)return;const plain=x=>x.replace(/\*\*/g,"").replace(/&#x27;/g,"'").replace(/&amp;/g,"&").replace(/&quot;/g,'"');
+ $("wcb").innerHTML="<h3>"+eh(w)+sb(w.replace("…","").replace("?",""))+"</h3><div class='ipa'>"+eh(d.ipa)+"</div><div class='tr'>🇺🇦 "+eh(d.ua)+"</div>"
+ +"<h4>Collocations</h4><ul>"+d.col.map(c=>"<li>"+eh(c)+sb(c.replace("…",""))+"</li>").join("")+"</ul>"
+ +"<h4>Examples</h4><ul>"+d.ex.map(x=>"<li>"+x.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")+sb(plain(x))+"</li>").join("")+"</ul>";$("wcov").classList.add("show")}
+function closeW(){$("wcov").classList.remove("show")}
+$("wcov").addEventListener("click",e=>{if(e.target.id==="wcov")closeW()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeW()});
+document.addEventListener("click",e=>{const b=e.target.closest(".say,.vg span");if(!b)return;if(b.closest(".vg")&&WD[b.dataset.t]){openW(b.dataset.t);say(b.dataset.t.replace("…",""));return}
+ if(b.dataset.d)playDlg(JSON.parse(b.dataset.d));else if(b.dataset.t)say(b.dataset.t)});
 document.querySelectorAll("#score button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#score button").forEach(x=>x.classList.remove("on"));b.classList.add("on");later()});
 document.addEventListener("input",e=>{if(e.target.closest("main"))later()});document.addEventListener("change",e=>{if(e.target.closest("main"))later()});
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button,.sec").forEach(x=>x.classList.remove("on"));b.classList.add("on");$(b.dataset.s).classList.add("on");scrollTo(0,0)});
