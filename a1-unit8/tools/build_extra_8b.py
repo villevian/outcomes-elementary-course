@@ -1,9 +1,8 @@
-"""Outcomes A1 · 8B Extra — Lexical lab on 8B vocabulary (town plans), A2+ texts.
+"""Outcomes A1 · 8B Extra — Lexical lab on 8B vocabulary in EVERYDAY contexts (not town plans, which the lesson already covers), A2+ texts.
 Lexical approach (chunks, collocations, noticing → use) organised by Bloom's taxonomy:
-REMEMBER (cards, emoji) → UNDERSTAND (meanings) → APPLY (collocations, gaps) → READ & NOTICE (Reddit-style thread) →
-LISTEN (street interviews, audio 8b-street.mp3) → ANALYSE (for / against) → EVALUATE (Mayor for a day) → CREATE (your comment).
-Thread and interviews are based on real local debates discussed on Reddit and in local news (stadium vs library, street lights off
-at night, a German town where you phone to switch the lights on); the town, names and usernames are invented.
+REMEMBER (emoji) → UNDERSTAND (meanings) → APPLY (word partners, real-life sentences) → READ & NOTICE (Reddit-style thread: is an air fryer a good use of money?) →
+LISTEN (radio phone-in: neighbours' endless renovation, going to work by train, solar panels — audio 8b-radio.mp3) → ANALYSE (for / against) →
+EVALUATE (game: spend a €1,000 bonus) → CREATE (your own Reddit post). Situations are modelled on real Reddit / forum discussions; usernames are invented.
 Usage: python3 build_extra_8b.py OUT_ROOT [STUDENT_CODE]
 """
 import os, sys, json, random
@@ -17,14 +16,13 @@ def shuf(o): o = list(o); random.shuffle(o); return o
 def hid(k): return '<input type="hidden" class="g" data-k="%s">' % k
 def bloom(level, ua): return '<div class="bl"><b>%s</b> · %s</div>' % (level, ua)
 
-# 1 REMEMBER — emoji town
-EMO = [("🏟️", "a new stadium"), ("✈️", "a new airport"), ("🚇", "a new metro line"), ("💡", "more street lights"), ("📚", "a bigger library"),
-       ("🏥", "a new hospital"), ("🛍️", "a new shopping centre"), ("🏫", "more schools"), ("🛣️", "better roads"), ("📶", "better wi-fi")]
+# 1 REMEMBER — emoji → word (everyday life, not town plans)
+EMO = [("🏗️", "build"), ("👥", "crowded"), ("💶", "economy"), ("🏛️", "government"), ("🎓", "education"), ("🌍", "environment"),
+       ("✅", "complete"), ("⏱️", "save time"), ("👍💶", "a good use of money"), ("🧑‍🍳", "employ")]
 OPT1 = sorted(w for _, w in EMO)
 EMO_S = shuf(EMO)
-
-s1 = (bloom("1 REMEMBER", "згадати слова") + sh("Vocabulary", "Our town needs …") +
-      ins(1, "What does our town need? Look at the picture and choose the phrase.", "Що потрібно місту? Подивись на емодзі й обери фразу.") +
+s1 = (bloom("1 REMEMBER", "згадати слова") + sh("Vocabulary", "Words from 8B") +
+      ins(1, "Look at the emoji. Which word or phrase from 8B is it?", "Подивись на емодзі. Яке це слово з уроку 8B?") +
       "".join('<div class="row"><span class="emo">%s</span> %s%s</div>' % (e, sel("x1_%d" % i, OPT1, 230), fb("x1_%d" % i)) for i, (e, _) in enumerate(EMO_S)) + ctl("x1"))
 for i, (_, w) in enumerate(EMO_S): K["x1_%d" % i] = [w]
 
@@ -39,42 +37,42 @@ s2 = (bloom("2 UNDERSTAND", "зрозуміти значення") + sh("Vocabul
 for i, (w, _) in enumerate(M2S): K["x2_%d" % i] = [w]
 
 # 3 APPLY — collocations (click pairs) + gaps
-PAIRS = [("build", "a new stadium"), ("save", "time"), ("employ", "local people"), ("help", "the economy"), ("protect", "the environment"),
-         ("take a long time", "to complete"), ("spend money", "on education"), ("be bad", "for safety")]
+PAIRS = [("build", "a bigger kitchen"), ("save", "time in the morning"), ("employ", "five people from our street"), ("help", "the local economy"),
+         ("be bad", "for the environment"), ("take a year", "to complete"), ("spend money", "on education"), ("be", "a good use of money")]
 s3 = (bloom("3 APPLY", "використати в словосполученнях") + sh("Lexical lab", "Word partners") +
       ins(3, "Words have partners! Click a verb on the left, then its partner on the right.", "Слова мають «пари». Натисни дієслово зліва, потім його пару справа.") +
       '<div class="pairs"><div class="pl">%s</div><div class="pr">%s</div></div>' % (
           "".join('<button class="pb" data-i="%d" data-s="L">%s</button>' % (i, a) for i, (a, _) in shuf(list(enumerate(PAIRS)))),
           "".join('<button class="pb" data-i="%d" data-s="R">%s</button>' % (i, b) for i, (_, b) in shuf(list(enumerate(PAIRS))))) +
       hid("prs") + '<p class="res" id="r_prs"></p>')
-G4 = [("The metro is going to ___ time for everyone.", "save"), ("The new shopping centre is going to ___ 200 local people.", "employ"),
-      ("Tourists are going to ___ the economy.", "help"), ("Dark streets are bad for ___.", "safety"),
-      ("A new road can take a long time to ___.", "complete"), ("We need to ___ the environment — please don't build in the park!", "protect")]
+G4 = [("I love my air fryer. It’s going to ___ time on busy evenings.", "save"), ("Our little café is going to ___ two students this summer.", "employ"),
+      ("Buy from small shops on your street — you ___ the local economy.", "help"), ("Cheap clothes you wear only once are bad for the ___.", "environment"),
+      ("My neighbours started their new kitchen in March, and it’s still not ___!", "complete"), ("The gym is so ___ at 6 p.m. that I go at 6 a.m.", "crowded")]
 OPT4 = sorted(a for _, a in G4)
 s4 = (bloom("3 APPLY", "використати в реченнях") + sh("Lexical lab", "Complete the sentences") +
-      ins(4, "Complete the sentences with the partners from Exercise 3. Try from memory!", "Доповни речення. Спробуй з пам’яті!") +
+      ins(4, "Real-life sentences from people online. Complete them. Try from memory!", "Речення з реального життя людей. Доповни їх з пам’яті!") +
       "".join('<div class="row"><span class="w">%d</span>%s%s</div>' % (i + 1, q.replace("___", sel("x4_%d" % i, OPT4, 130)), fb("x4_%d" % i)) for i, (q, _) in enumerate(G4)) + ctl("x4"))
 for i, (_, a) in enumerate(G4): K["x4_%d" % i] = [a]
 
 # 4 READ — Reddit-style thread
-THREAD = [("greenford_mum", "Council meeting news 📢 They want to build a <b>new stadium</b> by the river (€40 million!) — and the library is going to close on Sundays to save money. Is this <b>a good use of money</b>??", "post"),
-          ("footballdad77", "I think it’s a good idea. The stadium is going to <b>employ</b> 300 local people and it’s going to <b>help the economy</b>. Cafés and shops are going to make more money on match days.", ""),
-          ("bookworm_lena", "I don’t think it’s a good idea. The library is the only free place for kids and students in our town. <b>Education</b> is more important than football!", ""),
-          ("cyclist_greenford", "Nobody is talking about traffic. The roads near the river are already <b>crowded</b>. On match days it’s going to be terrible.", ""),
-          ("eco_tom", "It’s going to be bad for the <b>environment</b>. They’re going to <b>build</b> on the park by the river! Why not use the old factory?", ""),
-          ("realist_99", "In my old city they built a stadium. It took seven years to <b>complete</b> and it cost double. <b>Nothing</b> is going to change here — the <b>government</b> always does this 😅", ""),
-          ("greenford_mum", "Wow, so many opinions! How about a vote? 🗳️", "")]
-THR = '<div class="rd"><div class="rh">r/Greenford · Our town, our plans</div>%s</div>' % "".join(
+THREAD = [("tired_mum_of_two", "Is an air fryer <b>a good use of money</b>? 🤔 It’s €150. My friends say it’s going to <b>save time</b>, but I already have an oven…", "post"),
+          ("busy_dad", "Yes! I work late and it <b>saves time</b> every evening — dinner in 15 minutes. Now I use it more than my oven.", ""),
+          ("honest_jen", "I bought one last year and used it twice. Save your money 😂", ""),
+          ("green_kitchen", "It uses less electricity than a big oven, so it’s better for the <b>environment</b> — and for your bills.", ""),
+          ("student_life", "€150? I’d spend it on <b>education</b>. An online course is a better use of money.", ""),
+          ("local_first", "If you buy one, buy it from a small shop near you, not online. They <b>employ</b> people from our town and it helps the local <b>economy</b>.", ""),
+          ("tired_mum_of_two", "Thanks, everyone! I’m going to buy one from the little shop on our street 😄", "")]
+THR = '<div class="rd"><div class="rh">r/NoStupidQuestions · Is it worth it?</div>%s</div>' % "".join(
     '<div class="rc%s"><div class="ru">u/%s</div><p>%s</p><div class="rv">⬆ %d · 💬 Reply</div></div>' % (" op" if k == "post" else "", u, t, v)
-    for (u, t, k), v in zip(THREAD, [128, 64, 97, 41, 55, 73, 12]))
-FA = [("footballdad77", "for"), ("bookworm_lena", "against"), ("cyclist_greenford", "against"), ("eco_tom", "against"), ("realist_99", "against")]
-s5 = (bloom("4 READ & NOTICE", "читати й помічати слова") + sh("Reading", "r/Greenford") +
-      ins(5, "Read the Reddit thread about a new stadium. Is each person <b>for</b> or <b>against</b> the stadium?", "Прочитай обговорення. Людина «за» чи «проти» стадіону?") + THR +
-      "".join('<div class="row">u/%s → %s%s</div>' % (u, sel("x5_%d" % i, ["for", "against"], 110), fb("x5_%d" % i)) for i, (u, _) in enumerate(FA)) + ctl("x5") +
-      '<p class="hint">The town and usernames are invented. The situation is real: people on Reddit and in local news often argue about money for stadiums vs libraries.</p>')
+    for (u, t, k), v in zip(THREAD, [212, 140, 186, 77, 59, 91, 33]))
+FA = [("busy_dad", "buy it"), ("honest_jen", "don’t buy it"), ("green_kitchen", "buy it"), ("student_life", "don’t buy it"), ("local_first", "buy it in a local shop")]
+s5 = (bloom("4 READ & NOTICE", "читати й помічати слова") + sh("Reading", "Is it a good use of money?") +
+      ins(5, "A mum asks on Reddit: should she buy an air fryer? Read the answers. What does each person say?", "Мама питає на Reddit, чи купувати аерогриль. Що радить кожна людина?") + THR +
+      "".join('<div class="row">u/%s → %s%s</div>' % (u, sel("x5_%d" % i, ["buy it", "don’t buy it", "buy it in a local shop"], 210), fb("x5_%d" % i)) for i, (u, _) in enumerate(FA)) + ctl("x5") +
+      '<p class="hint">Usernames are invented. The situation is real: people on Reddit really ask if an air fryer is worth the money — and the answers are like these!</p>')
 for i, (_, a) in enumerate(FA): K["x5_%d" % i] = [a]
-WHO = [("The stadium is going to be good for jobs.", "footballdad77"), ("Kids need a free place to study.", "bookworm_lena"), ("There are too many cars near the river.", "cyclist_greenford"),
-       ("They are going to build in the park.", "eco_tom"), ("Big projects often cost more than they say.", "realist_99")]
+WHO = [("It’s faster than cooking in the oven.", "busy_dad"), ("I didn’t really use mine.", "honest_jen"), ("It’s cheaper to use.", "green_kitchen"),
+       ("Learning is more important.", "student_life"), ("Shop near your home.", "local_first")]
 UOPT = sorted(set(u for u, _ in FA))
 s6 = (bloom("4 READ & NOTICE", "знайти деталі") + sh("Reading", "Who says it?") +
       ins(6, "Who says this? The words are different in the thread — look for the meaning!", "Хто це каже? У тексті інші слова — шукай зміст.") +
@@ -83,25 +81,27 @@ s6 = (bloom("4 READ & NOTICE", "знайти деталі") + sh("Reading", "Who
 for i, (_, a) in enumerate(WHO): K["x6_%d" % i] = [a]
 
 # 5 LISTEN — street interviews
-L1 = [("street lights at night", "yes"), ("a new stadium", "yes"), ("a new hospital", "no"), ("a new metro line to the airport", "yes"), ("more parks", "no")]
-s7 = (bloom("5 LISTEN", "слухати") + sh("Listening", "Our Town Today: street interviews") +
-      ins(7, "Listen to a radio reporter in the street. Which plans do people talk about?", "Послухай вуличні інтерв’ю. Про які плани говорять люди? Перший раз — без пауз.") +
-      audio_slot("8b-street.mp3", "Our Town Today (1:30)") +
+L1 = [("neighbours who are building a new kitchen", "yes"), ("going to work by train", "yes"), ("solar panels on a house", "yes"), ("a new job", "no"), ("a holiday", "no")]
+s7 = (bloom("5 LISTEN", "слухати") + sh("Listening", "Radio: Good idea, bad idea?") +
+      ins(7, "Three people call a radio show about their plans. What do they talk about?", "Троє людей дзвонять на радіо й розповідають про свої плани. Про що вони говорять? Перший раз — без пауз.") +
+      audio_slot("8b-radio.mp3", "Good idea, bad idea? (1:25)") +
       "".join('<div class="row">%s → %s%s</div>' % (t, sel("x7_%d" % i, ["yes", "no"], 80), fb("x7_%d" % i)) for i, (t, _) in enumerate(L1)) + ctl("x7"))
 for i, (_, a) in enumerate(L1): K["x7_%d" % i] = [a]
-L2 = [("I walk my dog late at night.", "Tom"), ("I’d like to see the stars at night!", "Anna"), ("Our kids need a bigger library.", "George"),
-      ("The roads are already crowded.", "George"), ("It’s going to save time for everyone.", "Tom"), ("Now it takes an hour by bus.", "Anna")]
-SCRIPT = ('<p><b>Reporter:</b> Good morning! This is Our Town Today. The council has three big plans this year … The council is going to switch off the street lights from one to five in the morning, to save money. What do you think?</p>'
-          '<p><b>Tom:</b> I don’t think it’s a good idea. I walk my dog late at night, and the streets are going to be very dark. It’s going to be bad for safety.</p>'
-          '<p><b>Anna:</b> Actually, I think it’s a good idea. It’s going to save money, and it’s good for the environment. And I’d like to see the stars at night!</p>'
-          '<p><b>Reporter:</b> In a small town in Germany, you can call a number on your phone, and the street lights come on for fifteen minutes. — <b>Anna:</b> Ha! That’s brilliant. I’d really like that here.</p>'
-          '<p><b>Reporter:</b> The second plan is a new stadium by the river. It’s going to cost forty million euros.</p>'
-          '<p><b>George:</b> Forty million? That’s not a good use of money. They’re going to close the library on Sundays, but they have money for a stadium? Our kids need more schools and a bigger library, not more football. … The roads are already crowded. On match days, it’s going to be terrible.</p>'
-          '<p><b>Reporter:</b> And the last plan: a new metro line to the airport. It’s going to take six years to complete.</p>'
-          '<p><b>Tom:</b> Six years! That’s a long time. But I agree with the plan. It’s going to save time for everyone, and it’s going to employ a lot of local people. — <b>Anna:</b> I agree. Now it takes an hour to get to the airport by bus.</p>')
+L2 = [("They started in March.", "Tom"), ("I can read on the train.", "Anna"), ("Our electricity bills are very high.", "George"),
+      ("It’s going to save time.", "Anna"), ("I’m going to talk to them this weekend.", "Tom"), ("They employ ten people from our town.", "George")]
+SCRIPT = ('<p><b>Host:</b> Hello and welcome to <i>Good Idea, Bad Idea?</i> — the show where you call us about your plans. Our first caller is Tom. Hi, Tom!</p>'
+          '<p><b>Tom:</b> Hi! So, my neighbours are building a new kitchen. They started in March. It’s November now, and it’s still not complete! Every morning at eight o’clock: bang, bang, bang. And now they’re going to build a room on the roof too.</p>'
+          '<p><b>Host:</b> Oh no! What are you going to do? — <b>Tom:</b> I’m going to talk to them this weekend. I don’t think it’s a good idea to wait.</p>'
+          '<p><b>Host:</b> Good luck, Tom! Our next caller is Anna. Hi, Anna!</p>'
+          '<p><b>Anna:</b> Hi! I want to sell my car and go to work by train. It’s good for the environment, and I can read on the train. But my husband doesn’t agree. He says the trains are very crowded in the morning.</p>'
+          '<p><b>Host:</b> Hmm. Is the train faster? — <b>Anna:</b> Yes! It’s going to save time — about twenty minutes every day. And I’m not going to pay for parking.</p>'
+          '<p><b>Host:</b> I think it’s a good idea, Anna! And our last caller is George.</p>'
+          '<p><b>George:</b> Hello. The government is going to pay half of the money for solar panels on houses. My wife wants them. They cost six thousand euros.</p>'
+          '<p><b>Host:</b> And is that a good use of money? — <b>George:</b> I think so. Our electricity bills are very high. And a local company is going to do the work. They employ ten people from our town, so it’s good for the local economy too.</p>'
+          '<p><b>Host:</b> Brilliant! Thanks, everyone. Call us again next week!</p>')
 s8 = (bloom("5 LISTEN", "слухати деталі") + sh("Listening", "Who says it?") +
       ins(8, "Listen again. Who says it: Tom, Anna or George? You can pause.", "Послухай ще раз. Хто це каже? Можна ставити на паузу.") +
-      audio_slot("8b-street.mp3", "Our Town Today") +
+      audio_slot("8b-radio.mp3", "Good idea, bad idea?") +
       "".join('<div class="row"><span class="w">%d</span>“%s” → %s%s</div>' % (i + 1, q, sel("x8_%d" % i, ["Tom", "Anna", "George"], 110), fb("x8_%d" % i)) for i, (q, _) in enumerate(L2)) + ctl("x8") +
       model("sc8", SCRIPT, "Show the script") +
       '<p class="hint">Shadowing: open the script, choose 3 sentences and say them with the speaker. Same speed, same feeling!</p>')
@@ -113,27 +113,27 @@ ARG = [("It’s going to help the economy.", "for"), ("It’s going to employ lo
        ("It’s going to take a long time to complete.", "against"), ("It’s good for education.", "for")]
 SW = [a for a, _ in ARG]; SG = {a: g for a, g in ARG}
 s9 = (bloom("6 ANALYSE", "розкласти аргументи") + sh("Lexical lab", "For or against?") +
-      ins(9, "Sort the arguments: is it a reason FOR a plan or AGAINST it? Click a sentence, then a box.", "Розклади аргументи: «за» чи «проти». Натисни речення, потім коробку.") +
+      ins(9, "Your friend has a plan. Is each sentence a reason FOR the plan or AGAINST it? Click a sentence, then a box.", "У подруги є план. Це аргумент «за» чи «проти»? Натисни речення, потім коробку.") +
       '<div class="pool" id="pool">%s</div><div class="bins"><div class="bin" data-g="for"><b>👍 For</b><div class="in"></div></div><div class="bin" data-g="against"><b>👎 Against</b><div class="in"></div></div></div>' % "".join(
           '<span class="chip" data-w="%s">%s</span>' % (esc(w), w) for w in shuf(SW)) +
       "".join(hid("srt_%d" % i) for i in range(len(SW))) + '<div class="ctl"><button class="btn" onclick="sortChk()">Check</button><span class="res" id="r_srt"></span></div>')
 
-# 7 EVALUATE — Mayor for a day
-PROJ = [("stadium", "🏟️ a new stadium", 40), ("metro", "🚇 a new metro line", 60), ("library", "📚 a bigger library", 10), ("hospital", "🏥 a new hospital", 50),
-        ("lights", "💡 more street lights", 5), ("schools", "🏫 two new schools", 30), ("wifi", "📶 free wi-fi in the centre", 5), ("park", "🌳 a new park", 15)]
-s10 = (bloom("7 EVALUATE", "оцінити й вибрати") + sh("Game", "Mayor for a day 🏛️") +
-       ins(10, "You are the mayor of Greenford! You have <b>€100 million</b>. Choose the projects. Then press <b>Greenford in 2030</b>.", "Ти — мерка Ґрінфорда! Маєш €100 млн. Обери проєкти й натисни «Greenford in 2030».") +
-       '<div class="proj">%s</div><div class="ctl"><span class="tm" id="left">€100 million left</span><button class="btn" onclick="town()">🔮 Greenford in 2030</button></div><div id="tout"></div>' % "".join(
-           '<label class="pj"><input type="checkbox" data-p="%s" data-c="%d" onchange="budg()"> %s <b>€%dm</b></label>' % (k, c, t, c) for k, t, c in PROJ) +
-       hid("mayor") + '<p class="ins" style="margin-top:14px">Explain your choice to your teacher (or write): <i>I chose … because it’s going to … I didn’t choose … because …</i></p>' +
-       ta("x10", "I chose … because it’s going to …", 90))
+# 7 EVALUATE — €1,000 bonus game
+PROJ = [("fryer", "🍟 an air fryer", 150), ("course", "🎓 an online English course", 300), ("bike", "🚲 a bike for work", 400), ("trip", "✈️ a weekend in Rome", 500),
+        ("gym", "🏋️ a gym for one year", 350), ("phone", "📱 a new phone", 900), ("shelter", "🐶 give to a dog shelter", 100), ("panel", "☀️ a solar panel for your balcony (the government pays half)", 300)]
+s10 = (bloom("7 EVALUATE", "оцінити й вибрати") + sh("Game", "Your €1,000 bonus 💶") +
+       ins(10, "Good news: you have a <b>€1,000 bonus</b> at work! How are you going to spend it? Choose, then press <b>Me in one year</b>.", "Тобі дали премію €1 000! На що витратиш? Обери й натисни «Me in one year».") +
+       '<div class="proj">%s</div><div class="ctl"><span class="tm" id="left">€1,000 left</span><button class="btn" onclick="town()">🔮 Me in one year</button></div><div id="tout"></div>' % "".join(
+           '<label class="pj"><input type="checkbox" data-p="%s" data-c="%d" onchange="budg()"> %s <b>€%d</b></label>' % (k, c, t, c) for k, t, c in PROJ) +
+       hid("mayor") + '<p class="ins" style="margin-top:14px">Explain your choice: <i>I think … is a good use of money because it’s going to … I didn’t choose … because …</i></p>' +
+       ta("x10", "I think … is a good use of money because …", 90))
 
 # 8 CREATE — your Reddit comment
 TW = ["build", "crowded", "economy", "government", "education", "environment", "complete", "save time", "a good use of money", "employ", "safety", "i agree", "i think it's a good idea", "i don't think", "it's going to"]
-s11 = (bloom("8 CREATE", "створити свій текст") + sh("Writing", "Your comment on r/Greenford") +
-       ins(11, "Write your own comment for the thread (40–60 words). Are you for or against the stadium? Use at least 5 words from this page.", "Напиши свій коментар (40–60 слів). Ти «за» чи «проти» стадіону? Використай щонайменше 5 слів зі сторінки.") +
-       wbox(["a good use of money", "help the economy", "employ local people", "crowded", "environment", "education", "save time", "take a long time to complete", "I agree", "I don't think it's a good idea"]) +
-       ta("x11", "u/maria: I think … / I don't think …", 140) + '<p class="res" id="wc"></p>' + SELF)
+s11 = (bloom("8 CREATE", "створити свій текст") + sh("Writing", "Your post on Reddit") +
+       ins(11, "Write your own Reddit post (40–60 words): <i>Is … a good use of money?</i> Tell people about a plan (a new phone, a course, a trip, a car…) and what you think. Use at least 5 words from this page.", "Напиши свій пост на Reddit (40–60 слів): «Чи варто купувати / робити …?» Розкажи про свій план і що ти думаєш. Використай щонайменше 5 слів зі сторінки.") +
+       wbox(["a good use of money", "save time", "help the local economy", "employ", "crowded", "environment", "education", "complete", "I agree", "I don't think it's a good idea"]) +
+       ta("x11", "Is a … a good use of money? I want to … I think it’s going to …", 140) + '<p class="res" id="wc"></p>' + SELF)
 
 DATA = {"SW": SW, "SG": SG, "PN": len(PAIRS), "TW": TW}
 XJS = r"""
@@ -155,16 +155,14 @@ function sortChk(){let n=0,left=$a("#pool .chip").length;$a(".bin .chip").forEac
  $q("#r_srt").textContent=n+" / "+D.SW.length+(left?" · "+left+" not sorted yet":n===D.SW.length?" ✓ Well done!":" · red = wrong box")}
 /* mayor */
 function chosen(){return $a(".pj input:checked").map(i=>i.dataset.p)}
-function budg(){const s=$a(".pj input:checked").reduce((a,i)=>a+ +i.dataset.c,0);const l=100-s;$q("#left").textContent=(l<0?"⚠ over budget by €"+(-l):"€"+l)+" million"+(l<0?"":" left");$q("#left").className="tm"+(l<0?" bad":"");setH("mayor",chosen().join(","))}
-function town(){const c=chosen(),has=x=>c.includes(x),s=$a(".pj input:checked").reduce((a,i)=>a+ +i.dataset.c,0);if(s>100){$q("#tout").innerHTML="<p>⚠ Too expensive! Remove a project.</p>";return}
- const L=[];L.push(has("metro")?"🚇 The metro line is complete. It saves time for everyone — 20 minutes to the airport!":"🚌 There is no metro. The buses are very crowded in the morning.");
- L.push(has("stadium")?"🏟️ The stadium employs 300 people and helps the economy — but the roads are crowded on match days.":"⚽ No stadium. Football fans are not happy, but the river park is still green.");
- L.push(has("library")||has("schools")?"📚 More kids study after school. Good for education!":"📕 The library is closed on Sundays. Students study in cafés.");
- L.push(has("hospital")?"🏥 The new hospital is great. People don't wait for a doctor for weeks.":"🏥 People wait a long time for a doctor.");
- L.push(has("lights")?"💡 The streets are safe at night.":"🌌 The streets are dark at night… but you can see the stars!");
- if(has("park"))L.push("🌳 The new park is good for the environment. Families love it.");if(has("wifi"))L.push("📶 Free wi-fi! Tourists post photos of Greenford everywhere.");
- const happy=Math.min(100,30+c.length*9+(has("hospital")?8:0)+(has("library")?6:0));
- $q("#tout").innerHTML=`<div class="rep"><b>📰 Greenford News, 2030 · People are ${happy}% happy</b><ul>${L.map(x=>"<li>"+x+"</li>").join("")}</ul><p class="hint">Do you agree? Was it a good use of money?</p></div>`}
+function budg(){const t=$a(".pj input:checked").reduce((a,i)=>a+ +i.dataset.c,0);const l=1000-t;$q("#left").textContent=(l<0?"⚠ over by €"+(-l):"€"+l+" left");$q("#left").className="tm"+(l<0?" bad":"");setH("mayor",chosen().join(","))}
+function town(){const c=chosen(),has=x=>c.includes(x),t=$a(".pj input:checked").reduce((a,i)=>a+ +i.dataset.c,0);if(t>1000){$q("#tout").innerHTML="<p>⚠ Too expensive! Remove something.</p>";return}
+ const R={fryer:"🍟 Dinner in 15 minutes! The air fryer saves time every evening.",course:"🎓 You finished the course. Your English is much better — a great use of money!",
+ bike:"🚲 You go to work by bike. It saves time in traffic and it’s good for the environment.",trip:"✈️ Rome was beautiful! You still talk about the pizza 🍕",
+ gym:"🏋️ You went to the gym… 6 times. It was always crowded at 6 p.m. 😅",phone:"📱 Nice phone! But nothing changed in your life.",
+ shelter:"🐶 The shelter bought food for 20 dogs. They sent you a photo!",panel:"☀️ The solar panel is complete. Your electricity bill is 20% lower."};
+ const L=c.map(k=>R[k]);if(!L.length)L.push("💰 You saved all the money. Was that a good idea?");if(1000-t>=200&&L.length)L.push("💰 You still have €"+(1000-t)+" for later.");
+ $q("#tout").innerHTML=`<div class="rep"><b>🔮 You, one year later</b><ul>${L.map(x=>"<li>"+x+"</li>").join("")}</ul><p class="hint">Which choice was the best use of money? Why?</p></div>`}
 /* word counter */
 function wc(){const t=(hv("x11")||"").toLowerCase().replace(/[’]/g,"'");const used=D.TW.filter(w=>t.includes(w));const n=(t.match(/\S+/g)||[]).length;
  $q("#wc").textContent=n+" words · "+used.length+" lesson words"+(used.length?": "+used.join(", "):"")+(used.length>=5&&n>=40?" ✓ Great!":"")}
@@ -184,11 +182,10 @@ details.dd summary{cursor:pointer;color:var(--sky);font-weight:600;margin:6px 0}
 .tm{font-weight:600;background:var(--y2);padding:4px 12px;margin-right:8px}.tm.bad{background:#fdecec;color:#b52b27}.rep{border:2px solid var(--y);background:#fffdf3;padding:10px 16px;margin-top:10px}.rep li{margin:4px 0}
 @media(max-width:700px){.bins,.proj,.pairs{grid-template-columns:1fr}}</style>"""
 sections = [("1", s1), ("2", s2), ("3", s3), ("4", s4), ("5", s5), ("6", s6), ("7", s7), ("8", s8), ("9", s9), ("10", s10), ("11", s11)]
-vocab = [("Town plans", ["a new airport", "a bigger library", "better roads", "a new stadium", "a new metro line", "a new shopping centre", "a new hospital", "more street lights", "more schools", "better wi-fi"]),
-         ("Words", ["build", "crowded", "economy", "government", "education", "environment", "complete", "save time", "a good use of money", "employ"]),
+vocab = [("Words", ["build", "crowded", "economy", "government", "education", "environment", "complete", "save time", "a good use of money", "employ"]),
          ("Opinions", ["I think it's a good idea.", "I don't think it's a good idea.", "I agree.", "It's going to be bad for …", "It's going to help …"])]
 html = page("8B", "For and against", "Extra · Lexical lab", ["learn and use the 8B words step by step: remember → understand → use → create",
-            "read a Reddit thread and listen to street interviews about town plans", "say what you think about plans: I think it's a good idea because …"],
+            "read a Reddit thread and listen to a radio show about everyday plans", "say what you think about plans: I think it's a good idea because …"],
             "oa1-8b-extra", CODE, sections, K, vocab, XJS)
 html = html.replace("</head>", CSS + "</head>", 1)
 p = os.path.join(OUT, "lessons/8b/all/extra.html"); os.makedirs(os.path.dirname(p), exist_ok=True)
