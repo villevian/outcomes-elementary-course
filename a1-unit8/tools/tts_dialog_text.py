@@ -1,0 +1,77 @@
+"""Audioscripts (speaker, line) used by tts_dialog.py and lesson builders."""
+A702 = [("E", "Hi, Tom. Thanks for your email on the recruitment companies."),
+ ("T", "No problem. So which agency do we want to use? We're recruiting for two jobs at the Manchester office and one in London."),
+ ("E", "I'm not sure. All Recruit has a London office, and Jones doesn't. Is that a problem?"),
+ ("T", "I don't think so, Jones is bigger. And they have offices near London."),
+ ("E", "Yes, that's true. But I can see that All Recruit offers a six-month guarantee on candidates."),
+ ("T", "Yes, that means, if the candidate leaves the company in the first six months, All Recruit will not charge us any fees. Jones only offers a three-month guarantee."),
+ ("E", "Right, and it says here All Recruit do background checks on candidates as well. Does that mean a check on job history and their use of social media, that kind of thing?"),
+ ("T", "That's correct, although Jones can also do that."),
+ ("E", "Ah, yes, I can see that. But All Recruit also searches for candidates on professional networking sites..."),
+ ("T", "Yes, that would be useful."),
+ ("E", "...and then do candidate interviews with their expert consultants. So they will do everything for us and probably find the right people."),
+ ("T", "Yes, they will. The problem might be the cost."),
+ ("E", "Hmm. Good point. So, All Recruit charges a fee of ten to fifteen percent of the candidate's first-year salary. So, that's around three thousand on a thirty thousand salary. That could be expensive, you're right."),
+ ("T", "Well, the alternative is Jones. They charge a fixed fee of three hundred and ninety-nine pounds for their standard service. It includes advertising and selection of CVs, but obviously no interview for that fee. They can do background checks for an additional fee."),
+ ("E", "OK. Maybe we just need the agency to advertise the job, check the candidate's background and then give us a list of ten candidates. We can do the interviews. I'd like to meet the candidates anyway."),
+ ("T", "Yes, exactly. But first, we need to know Jones' fee for background checks. I'll phone them now."),
+ ("E", "Great. If Jones are cheaper than All Recruit overall, let's use them."),
+ ("T", "OK, that sounds good. I'll let you know what they say.")]
+
+# A2+ 1.01 (updated 2026, Barcelona, bleisure). M = Marek (host), A = Alicia (events manager)
+# A2+ 1.01 — Vale's script (Track 1: Clients, Tech & Budgets · Track 2: The Rooftop Party & Bleisure). M = Marek, A = Alicia
+A2P_101 = [('M', "Welcome back to the podcast! I'm Marek, and today we are live in Barcelona with Alicia. Alicia, you are an incredible events manager. Tell us, what do you actually do? Do you plan weddings?"),
+ ('A', "Haha, no, I don't! Weddings are harder than business lunches. Wedding planners do weddings. I only plan events for companies."),
+ ('M', 'Ah, corporate life! So who are your main clients?'),
+ ('A', 'About ninety percent of my corporate clients are businesses — tech companies, banks, and start-ups. I help them plan an event, like a big annual conference, a product launch, or a fun team offsite.'),
+ ('M', 'Sounds busy! And how does it work in 2026? Everything is digital now, right?'),
+ ('A', 'Totally. Most events now are a hybrid event — you have people in the room and people online. We use QR-code registration at the door, an AI tool for the schedule, and we are streaming the talks live. Plus, we always make sure we have a lot of vegan and gluten-free food for every guest.'),
+ ('M', 'Wow, high-tech! And what about money? How do you manage a budget?'),
+ ('A', "Well, we talk about the budget at the first meeting. Prices are higher than they were five years ago. So it's tricky. I can't choose the most expensive hotel in Barcelona for a client with a small budget."),
+ ('M', 'Makes sense! And what about the opposite?'),
+ ('A', 'Exactly. For a cheap event, we choose the least expensive venue possible. Speaking of which, I try to find the best location for each event.'),
+ ('M', 'Like that big project you did recently? Tell us about it!'),
+ ('A', 'Oh, yes! My favorite recent project was a tenth anniversary party for a software company. We rented a fantastic rooftop, invited about three hundred guests, hired a cool DJ for entertainment, and made a strict "no laptops" rule!'),
+ ('M', 'No laptops at a tech party? Brilliant! Haha. But how do you handle everything? You have to arrange all the food, tables and chairs, coordinate the staff, and check every single thing.'),
+ ('A', "Oh, absolutely. It's all details! You have to be organised and pay attention to detail."),
+ ('M', 'And what was the hardest part of that rooftop party? Was it more difficult than your usual events?'),
+ ('A', 'Actually, yes! Planning an event outdoors is always the biggest challenge. Because of the wind and the unpredictable weather!'),
+ ('M', 'I can imagine. Now, what about the guests after the conference? Do they just fly home?'),
+ ('A', 'Not anymore! About half of the guests stay for the weekend after the conference. It\'s huge right now — it\'s called bleisure — "business and leisure".'),
+ ('M', 'I love that word. Bleisure in Barcelona! Before we finish, Alicia, what skills does an events manager need most? Are any of the skills more important, or less important?'),
+ ('A', 'Well, you need to get on with people, be totally organised, and have great attention to detail. But the top priority is client satisfaction. Honestly, you need all the skills together!'),
+ ('M', 'Perfect summary. Alicia, thank you so much!'),
+ ('A', 'De nada, Marek! See you at the next venue!')]
+
+
+# A2 1.01 (updated, IT): Ira (project manager) calls Dan (developer) to reschedule the sprint planning meeting
+A2_101 = [("I", "Hi, Dan. Have you got a minute?"),
+ ("D", "Oh, hi, Ira. Sure. How are things?"),
+ ("I", "Fine, thanks. But we need to change the date of the sprint planning meeting, sorry. Are you available on Friday the 29th, in the morning?"),
+ ("D", "Sorry, no, I’m not. I have a demo for a client on Friday morning, until eleven. Let me check my calendar… Then I have a call with the Berlin team at twelve, for an hour. I’m available in the afternoon. How about Friday afternoon?"),
+ ("I", "Sorry, I’m afraid I’m busy then. I meet clients on Friday afternoon from two o’clock. Wait… How about lunchtime on Friday?"),
+ ("D", "Friday lunchtime is good. I’m available. What time, exactly?"),
+ ("I", "I usually have lunch at one o’clock. How about then?"),
+ ("D", "Sounds good. Shall we meet in the meeting room Kyiv?"),
+ ("I", "Yes, that’s fine. Then we can go for lunch after the meeting."),
+ ("D", "OK, so the new sprint planning meeting is at one o’clock on Friday the 29th. I’ll update the invite in Google Calendar. See you then."),
+ ("I", "Thanks. See you then!")]
+
+
+# Outcomes A1 8B Extra (A2+): radio street interviews about town plans. R = reporter Kate, T = Tom, A = Anna, G = George
+OA_8B = [("R", "Good morning! This is Our Town Today. The council has three big plans this year, and we want to know what you think. Excuse me, have you got a minute?"),
+ ("T", "Sure."),
+ ("R", "The council is going to switch off the street lights from one to five in the morning, to save money. What do you think?"),
+ ("T", "I don’t think it’s a good idea. I walk my dog late at night, and the streets are going to be very dark. It’s going to be bad for safety."),
+ ("R", "Thank you. And you? What do you think?"),
+ ("A", "Actually, I think it’s a good idea. It’s going to save money, and it’s good for the environment. And I’d like to see the stars at night!"),
+ ("R", "In a small town in Germany, you can call a number on your phone, and the street lights come on for fifteen minutes."),
+ ("A", "Ha! That’s brilliant. I’d really like that here."),
+ ("R", "The second plan is a new stadium by the river. It’s going to cost forty million euros."),
+ ("G", "Forty million? That’s not a good use of money. They’re going to close the library on Sundays, but they have money for a stadium? Our kids need more schools and a bigger library, not more football."),
+ ("R", "So you’re against it."),
+ ("G", "Yes. And the roads are already crowded. On match days, it’s going to be terrible."),
+ ("R", "And the last plan: a new metro line to the airport. It’s going to take six years to complete."),
+ ("T", "Six years! That’s a long time. But I agree with the plan. It’s going to save time for everyone, and it’s going to employ a lot of local people."),
+ ("A", "I agree. Now it takes an hour to get to the airport by bus."),
+ ("R", "Thank you, everyone! And what do you think? Write to us on our page.")]
